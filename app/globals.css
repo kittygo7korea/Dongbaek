@@ -122,8 +122,22 @@ h2 { font-size: clamp(1.7rem, 3.6vw, 2.9rem); }
 .product-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(.7rem, 2vw, 1.4rem); max-width: 1160px; margin: auto; }
 .product-grid li { position: relative; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 1rem; overflow: hidden; background: var(--ivory); }
 .status { position: absolute; z-index: 1; top: .7rem; left: .7rem; padding: .3rem .65rem; border-radius: 3rem; background: var(--forest); color: var(--light-yellow); font-size: .7rem; font-weight: 700; }
-.product-photo { position: relative; aspect-ratio: 1.2; background: #fff; }
-.product-photo img { object-fit: contain; padding: 1.2rem; }
+/* 사진 영역을 배지 높이만큼 키우고 사진을 배지 아래로 내려, '2026 겨울 출시 예정' 배지가 사진을 가리지 않게 함 */
+.product-photo { position: relative; display: block; width: 100%; aspect-ratio: 1.05; padding: 0; border: 0; background: #fff; cursor: zoom-in; }
+.product-photo img { object-fit: contain; padding: 2.6rem 1.2rem 1.2rem; transition: transform .3s ease; }
+.product-photo:hover img { transform: scale(1.04); }
+.zoom-badge { position: absolute; right: .6rem; bottom: .6rem; display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--forest); color: #fff; }
+.zoom-badge svg { width: 1.1rem; height: 1.1rem; }
+/* 굿즈 크게 보기 */
+.zoom-dialog { width: min(92vw, 720px); max-height: 92svh; margin: auto; padding: 0; border: 0; border-radius: 1.2rem; background: var(--ivory); color: var(--forest); overflow: auto; }
+.zoom-dialog::backdrop { background: #18250dd0; }
+.zoom-body { position: relative; padding: 1rem 1rem 1.4rem; text-align: center; }
+.zoom-frame { position: relative; width: 100%; aspect-ratio: 1; max-height: 70svh; border-radius: .8rem; background: #fff; }
+.zoom-frame img { object-fit: contain; padding: 1.5rem; }
+.zoom-name { margin: 1rem 0 .3rem; font-size: 1.25rem; font-weight: 800; }
+.zoom-detail { margin: 0; color: var(--muted); font-size: .92rem; }
+.zoom-close { position: absolute; top: 1.6rem; right: 1.6rem; width: 2.4rem; height: 2.4rem; border: 0; border-radius: 50%; background: var(--forest); color: #fff; font-size: 1rem; }
+.zoom-close:hover { background: var(--logo-pink); }
 .product-grid h3 { margin: 1rem 1rem .3rem; font-size: clamp(.95rem, 2vw, 1.15rem); font-weight: 800; }
 .product-grid p { margin: 0 1rem; color: var(--muted); font-size: .86rem; line-height: 1.6; flex: 1; }
 .product-notify { align-self: flex-start; margin: .9rem 1rem 1.1rem; color: var(--logo-pink); font-size: .86rem; font-weight: 800; }
@@ -165,16 +179,25 @@ h2 { font-size: clamp(1.7rem, 3.6vw, 2.9rem); }
 .text-button { margin-top: 1rem; border: 0; background: none; color: #fff; text-decoration: underline; text-underline-offset: .3em; opacity: .75; font-size: .85rem; }
 
 /* 마무리 영상 */
-.film { padding: 0 clamp(1.2rem, 6vw, 5rem) clamp(3rem, 6vw, 5rem); background: var(--forest); }
+.film { padding: 0 clamp(1.2rem, 6vw, 5rem) clamp(3rem, 6vw, 5rem); background: var(--forest); overflow-x: clip; }
 .film video { display: block; width: 100%; max-width: 1160px; max-height: 80svh; margin: 0 auto; border-radius: 1rem; background: #000; }
 /* 캠페인 메인 손글씨 (타이포시트 LEVEL 1: 두 줄, 행간 1.05–1.15, 회전 ±10° 이내) */
-.handwrite-row { display: flex; align-items: center; justify-content: center; gap: clamp(.5rem, 3vw, 2.5rem); max-width: 1160px; margin: clamp(2rem, 5vw, 3.5rem) auto 0; }
-.handwrite { margin: 0; color: var(--acid-yellow); font-family: "Gaegu", "Noto Sans KR", cursive; font-weight: 400; font-size: clamp(2rem, 9.5vw, 7.2rem); white-space: nowrap; line-height: 1.08; letter-spacing: -.01em; text-align: center; transform: rotate(-4deg); filter: url(#crayon); }
-.handwrite-bloom { flex: none; width: clamp(101px, 24vw, 288px); height: auto; transform: rotate(6deg); } /* 기존 대비 120% */
+/* 손글씨는 화면 가운데. 블룸이는 첫 줄 아래에서 시작해, 숏폼 영상(가로 380px, 가운데) 오른쪽 빈 공간으로
+   내려오게 배치 → 글씨도 영상도 가리지 않음. 화면이 좁아 1.5배가 들어가지 않으면 들어가는 만큼만 키움.
+   행의 font-size = 손글씨 크기 → em 단위로 손글씨 줄 위치를 계산 */
+.handwrite-row { --bw: min(clamp(152px, 36vw, 432px), calc((50vw - 222px) / .72)); position: relative; max-width: 1160px; margin: clamp(2rem, 5vw, 3.5rem) auto 0; font-size: clamp(2rem, 9.5vw, 7.2rem); text-align: center; }
+.handwrite { display: inline-block; margin: 0; color: var(--acid-yellow); font-family: "Gaegu", "Noto Sans KR", cursive; font-weight: 400; font-size: 1em; white-space: nowrap; line-height: 1.08; letter-spacing: -.01em; text-align: center; transform: rotate(-4deg); filter: url(#crayon); }
+/* 기존(clamp 101–288px) 대비 1.5배. 이미지 왼쪽 19%·위쪽 6%는 투명 여백이라 그만큼 당겨서 배치 */
+.handwrite-bloom { position: absolute; width: var(--bw); height: auto; left: calc(50% + 190px + 1rem - var(--bw) * .19); top: calc(1.08em - var(--bw) * .04); transform: rotate(6deg); }
+@media (max-width: 720px) {
+  /* 모바일: 영상 옆 공간이 없어 '피어나' 바로 오른쪽에 두고, 영상과 겹치지 않게 아래 여백 확보 */
+  .handwrite-row { --bw: 152px; padding-bottom: 2.5rem; }
+  .handwrite-bloom { left: calc(50% + 1.45em - var(--bw) * .19); }
+}
 .shortform-wrap { position: relative; width: min(100%, 380px); margin: clamp(2rem, 5vw, 3.5rem) auto 0; }
 .film .shortform { display: block; width: 100%; max-height: none; aspect-ratio: 9 / 16; border-radius: 1rem; background: #000; }
-/* 숏폼 왼쪽의 작은 동백요정: 영상 높이의 20% */
-.shortform-fairy { position: absolute; right: calc(100% + 1rem); bottom: 12%; width: auto; height: 20%; }
+/* 숏폼 왼쪽의 작은 동백요정: 영상 높이의 10% */
+.shortform-fairy { position: absolute; right: calc(100% + 1rem); bottom: 12%; width: auto; height: 10%; } /* 기존 20%의 절반 */
 @media (max-width: 720px) {
   .shortform-wrap { margin-top: 5.5rem; }
   .shortform-fairy { right: auto; left: 0; bottom: auto; top: 0; transform: translateY(-72%); }

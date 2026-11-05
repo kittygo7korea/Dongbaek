@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { AutoSwipeTrack, BloomFormation, NotifyForm } from "./campaign-interactions";
+import { AutoSwipeTrack, BloomFormation, NotifyForm, ZoomableProduct } from "./campaign-interactions";
 
 const day = [
   { image: "walk.png", w: 1672, h: 941, step: "아침", title: "동백숲 길 걷기", text: "현무암 돌길을 따라 천천히. 블룸이는 늘 한 걸음 앞에서 걸어요." },
@@ -107,7 +107,7 @@ export default function Home() {
             {goods.map((g) => (
               <li key={g.image}>
                 <span className="status">2026 겨울 출시 예정</span>
-                <div className="product-photo"><Image src={`/bloom/${g.image}.webp`} alt={g.name} fill sizes="(max-width: 720px) 45vw, 340px" /></div>
+                <ZoomableProduct image={g.image} name={g.name} detail={g.detail} />
                 <h3>{g.name}</h3>
                 <p>{g.detail}</p>
                 <a className="product-notify" href="#notify">알림받기 <span aria-hidden="true">→</span></a>

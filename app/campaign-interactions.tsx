@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 
-/* 마을 하루 카드: 1초마다 다음 카드로 자동 스와이프, 끝에 닿으면 처음으로.
+/* 마을 하루 카드: 0.4초마다 다음 카드로 자동 스와이프, 끝에 닿으면 처음으로.
    마우스를 올리거나 손가락으로 만지거나 키보드로 들어오면 멈추고, 손을 떼면 잠시 뒤 다시 넘깁니다.
    '동작 줄이기' 설정이면 자동으로 넘기지 않습니다. */
 export function AutoSwipeTrack({ className, children }: { className?: string; children: ReactNode }) {
@@ -13,20 +13,29 @@ export function AutoSwipeTrack({ className, children }: { className?: string; ch
     const el = track.current;
     if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
+    const cardStep = () => {
+      const card = el.firstElementChild as HTMLElement | null;
+      return card ? card.offsetWidth + (parseFloat(getComputedStyle(el).columnGap) || 0) : 0;
+    };
+    // 넘기는 간격이 부드러운 스크롤 시간보다 짧을 수 있어, 현재 스크롤 위치 대신 '몇 번째 카드인지'로 다음 위치를 계산
+    let index = 0;
+    const syncIndex = () => { const s = cardStep(); index = s ? Math.round(el.scrollLeft / s) : 0; };
+
     let paused = false;
     let resumeTimer: number | undefined;
     const pause = () => { paused = true; window.clearTimeout(resumeTimer); };
-    const resumeLater = () => { window.clearTimeout(resumeTimer); resumeTimer = window.setTimeout(() => { paused = false; }, 2000); };
+    const resumeLater = () => { window.clearTimeout(resumeTimer); resumeTimer = window.setTimeout(() => { syncIndex(); paused = false; }, 2000); };
 
     const step = () => {
       if (paused || document.hidden) return;
-      const card = el.firstElementChild as HTMLElement | null;
-      if (!card) return;
-      const gap = parseFloat(getComputedStyle(el).columnGap) || 0;
-      const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4;
-      el.scrollTo({ left: atEnd ? 0 : el.scrollLeft + card.offsetWidth + gap, behavior: "smooth" });
+      const s = cardStep();
+      if (!s) return;
+      const max = el.scrollWidth - el.clientWidth;
+      const last = Math.ceil((max - 4) / s);
+      index = index >= last ? 0 : index + 1;
+      el.scrollTo({ left: Math.min(index * s, max), behavior: "smooth" });
     };
-    const timer = window.setInterval(step, 1000);
+    const timer = window.setInterval(step, 400); // 1초의 2.5배 속도 → 0.4초마다 다음 카드
 
     el.addEventListener("pointerenter", pause);
     el.addEventListener("pointerleave", resumeLater);
@@ -91,6 +100,33 @@ export function BloomFormation() {
         <span aria-hidden="true">↺</span> 요정이 피어나는 장면 다시 보기
       </button>
     </div>
+  );
+}
+
+/* 굿즈 사진을 누르면 크게 보기. <dialog>를 써서 Esc 키·닫기 버튼·바깥 어두운 영역 클릭으로 닫힘 */
+export function ZoomableProduct({ image, name, detail }: { image: string; name: string; detail: string }) {
+  const dialog = useRef<HTMLDialogElement>(null);
+  const src = `/bloom/${image}.webp`;
+
+  return (
+    <>
+      <button type="button" className="product-photo" onClick={() => dialog.current?.showModal()} aria-label={`${name} 크게 보기`}>
+        <Image src={src} alt={name} fill sizes="(max-width: 720px) 45vw, 340px" />
+        <span className="zoom-badge" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false"><path d="M10.5 4a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13Zm0 0M15.5 15.5 20 20M10.5 7.5v6M7.5 10.5h6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
+        </span>
+      </button>
+      <dialog ref={dialog} className="zoom-dialog" aria-label={`${name} 크게 보기`} onClick={(e) => { if (e.target === e.currentTarget) dialog.current?.close(); }}>
+        <div className="zoom-body">
+          <div className="zoom-frame">
+            <Image src={src} alt={name} fill sizes="(max-width: 720px) 92vw, 720px" />
+          </div>
+          <p className="zoom-name">{name}</p>
+          <p className="zoom-detail">{detail}</p>
+          <button type="button" className="zoom-close" onClick={() => dialog.current?.close()} aria-label="닫기">✕</button>
+        </div>
+      </dialog>
+    </>
   );
 }
 
