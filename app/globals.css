@@ -152,6 +152,10 @@ h2 { font-size: clamp(1.7rem, 3.6vw, 2.9rem); }
 .done-title { font-size: 1.3rem; font-weight: 800; color: var(--light-yellow); }
 .text-button { margin-top: 1rem; border: 0; background: none; color: #fff; text-decoration: underline; text-underline-offset: .3em; opacity: .75; font-size: .85rem; }
 
+/* 마무리 영상 */
+.film { padding: 0 clamp(1.2rem, 6vw, 5rem) clamp(3rem, 6vw, 5rem); background: var(--forest); }
+.film video { display: block; width: 100%; max-width: 1160px; max-height: 80svh; margin: 0 auto; border-radius: 1rem; background: #000; }
+
 footer { display: flex; justify-content: space-between; gap: .75rem; padding: 1.2rem clamp(1.2rem, 6vw, 5rem); background: var(--forest); color: #ffffffb0; border-top: 1px solid #ffffff1c; font-size: .8rem; }
 
 @media (max-width: 860px) {

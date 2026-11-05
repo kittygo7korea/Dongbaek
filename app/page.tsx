@@ -132,6 +132,11 @@ export default function Home() {
           <p>2026 겨울 · 동백마을 × A2O Lite 콜라보 굿즈 출시 알림</p>
           <NotifyForm />
         </section>
+
+        {/* 마무리 영상 (푸터 바로 위) */}
+        <section className="film" aria-label="동백마을 캠페인 영상">
+          <video src="/bloom/film.mp4" autoPlay muted loop playsInline controls preload="metadata" />
+        </section>
       </main>
 
       <footer>
