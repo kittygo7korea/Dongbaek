@@ -17,7 +17,7 @@ export function BloomFormation() {
             <span key={i} className="petal" style={{ ["--i" as string]: i }} aria-hidden="true" />
           ))}
           <div className="fairy-flight" aria-hidden="true">
-            <Image src="/bloom/fairy.webp" alt="" width={900} height={900} sizes="300px" preload />
+            <Image src="/bloom/fairy-white.png" alt="" width={1254} height={1254} sizes="300px" preload />
           </div>
           <div className="logo-formed" aria-hidden="true">
             <Image src="/bloom/logo.webp" alt="" width={900} height={900} sizes="(max-width: 720px) 92vw, 640px" preload />
