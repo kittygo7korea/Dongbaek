@@ -51,7 +51,7 @@ h2 { font-size: clamp(1.7rem, 3.6vw, 2.9rem); }
 .hero::after { content: ""; position: absolute; inset: 0; z-index: -1; background: radial-gradient(ellipse at 50% 42%, #18250d55, #18250dd9 75%); }
 .hero-inner { width: 100%; padding: 2.5rem 1rem 3rem; }
 .hero-eyebrow { color: var(--light-yellow); }
-.hero-copy { opacity: 0; animation: rise .9s ease 2.2s forwards; }
+.hero-copy { opacity: 0; animation: rise .9s ease 2.7s forwards; }
 .hero h1 { margin: .5rem 0 1.8rem; font-size: clamp(1.45rem, 3.4vw, 2.6rem); }
 .hero h1 em { font-style: normal; color: var(--light-yellow); }
 .scroll-hint { display: block; width: fit-content; margin: 1.3rem auto 0; font-size: .85rem; opacity: .85; }
@@ -67,34 +67,31 @@ h2 { font-size: clamp(1.7rem, 3.6vw, 2.9rem); }
 .logo-letters {
   -webkit-mask-image: radial-gradient(13.4% 13.6% at 46.97% 48.56%, transparent 98%, #000 100%), radial-gradient(10.3% 10.3% at 60.6% 50.5%, transparent 69%, #000 71%, #000 98%, transparent 100%);
   mask-image: radial-gradient(13.4% 13.6% at 46.97% 48.56%, transparent 98%, #000 100%), radial-gradient(10.3% 10.3% at 60.6% 50.5%, transparent 69%, #000 71%, #000 98%, transparent 100%);
-  animation: logo-in .7s ease both;
+  animation: logo-in .8s ease 1.7s both; /* 요정이 자리 잡은 뒤(1.55s)에야 글자가 나타남 */
 }
-/* 꽃 층은 요정과 같은 속도로 -120° → 0° 회전하며 나타나, 요정이 꽃으로 바뀌는 순간을 이어 줌 */
-.logo-flower { clip-path: ellipse(13.4% 13.6% at 46.97% 48.56%); transform-origin: 46.97% 48.56%; animation: flower-in .6s ease-out 1.55s both; }
+/* 원본 로고 꽃은 움직임 줄이기 설정에서만 사용 */
+.logo-flower { display: none; clip-path: ellipse(13.4% 13.6% at 46.97% 48.56%); }
 /* 동선 (총 약 1초): 로고 우상단에서 페이드인 → 세로는 처음에 빠르게 떨어지고(ease-out),
    가로는 천천히 출발해 점점 미끄러지듯(ease-in) 움직여 미끄럼틀 곡선을 그린 뒤 꽃 자리로 들어감 */
 .fairy-flight { position: absolute; left: 25.4%; top: 21.5%; width: 44%; animation: slide-x 1s cubic-bezier(.5,0,.75,1) .55s both, appear .45s ease .25s both; }
 .fairy-drop { animation: slide-y 1s cubic-bezier(.15,.6,.35,1) .55s both; }
 /* 회전 중심 = 요정 이미지 속 꽃 몸통의 중심 */
-.fairy-spin, .fairy-drop img { transform-origin: 48.96% 61.4%; }
-.fairy-spin { animation: fairy-turn 1s linear .55s both; }
-.fairy-drop img { animation: enter .6s ease-out 1.55s forwards; }
-.replay { margin-top: .4rem; padding: .45rem .95rem; border: 1px solid #ffffff55; border-radius: 3rem; background: transparent; color: #fff; font-size: .78rem; opacity: 0; animation: rise .6s ease 2.4s forwards; }
+.fairy-spin { position: relative; transform-origin: 48.96% 61.4%; animation: fairy-turn 1s ease-in-out .55s both; }
+/* 꽃 몸통 층은 남고, 전체 층(얼굴·팔다리·잎)은 글자가 나타나는 동안 사라짐 */
+.formation-square .fairy-body { position: absolute; inset: 0; filter: url(#fairy-pink-only); }
+.fairy-full { position: relative; animation: limbs-out .8s ease 1.7s forwards; }
+.replay { margin-top: .4rem; padding: .45rem .95rem; border: 1px solid #ffffff55; border-radius: 3rem; background: transparent; color: #fff; font-size: .78rem; opacity: 0; animation: rise .6s ease 2.9s forwards; }
 .replay:hover { background: #ffffff1c; }
 
 @keyframes appear { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slide-x { from { transform: translateX(112%); } to { transform: none; } }
 @keyframes slide-y { from { transform: translateY(-40%); } to { transform: none; } }
-/* 기본 이미지의 발은 12시 방향 → +30°=1시, +90°=3시, +150°=5시, +240°=8시 */
+/* 기본 이미지의 발은 12시 방향 → +30°=1시에서 +150°=5시까지만 회전 */
 @keyframes fairy-turn { /* 'spin'은 Tailwind 기본 애니메이션과 이름이 겹쳐 사용하지 않음 */
-  0%   { transform: rotate(30deg); }
-  30%  { transform: rotate(90deg); }
-  60%  { transform: rotate(150deg); }
-  100% { transform: rotate(240deg); }
+  from { transform: rotate(30deg); }
+  to   { transform: rotate(150deg); }
 }
-/* 8시에서 꽃이 되는 순간: 남은 120°를 돌며 사라지고, 같은 각도로 로고 꽃이 자리 잡음 */
-@keyframes enter { to { opacity: 0; transform: rotate(120deg) scale(.95); } }
-@keyframes flower-in { from { opacity: 0; transform: rotate(-120deg); } to { opacity: 1; transform: none; } }
+@keyframes limbs-out { to { opacity: 0; } }
 @keyframes logo-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 
@@ -133,12 +130,13 @@ h2 { font-size: clamp(1.7rem, 3.6vw, 2.9rem); }
 .product-notify:hover { text-decoration: underline; text-underline-offset: .3em; }
 
 /* 피크닉 장면 */
-.picnic { position: relative; isolation: isolate; min-height: clamp(380px, 56vw, 760px); display: flex; align-items: flex-end; color: #fff; }
+/* 카피는 좌상단(숲 잎사귀 부분)에 두어 아래쪽 피크닉 장면(꽃님이·블룸이·굿즈)을 가리지 않음 */
+.picnic { position: relative; isolation: isolate; min-height: clamp(380px, 56vw, 760px); display: flex; align-items: flex-start; color: #fff; }
 .picnic img { z-index: -2; object-fit: cover; object-position: 30% center; }
-.picnic::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, transparent 45%, #18250de6); }
-.picnic-copy { width: 100%; max-width: 1160px; margin: 0 auto; padding: 2rem clamp(1.2rem, 6vw, 5rem) clamp(2rem, 5vw, 3.5rem); }
-.picnic .eyebrow { color: var(--light-yellow); }
-.picnic h2 { margin: 0 0 .6rem; }
+.picnic::after { content: ""; position: absolute; inset: 0; z-index: -1; background: radial-gradient(ellipse 70% 55% at 0% 0%, #18250dd9, transparent 75%); }
+.picnic-copy { width: 100%; max-width: 1160px; margin: 0 auto; padding: clamp(1.4rem, 4vw, 3rem) clamp(1.2rem, 6vw, 5rem); }
+.picnic .eyebrow { color: var(--light-yellow); margin-bottom: .6rem; }
+.picnic h2 { margin: 0 0 .5rem; }
 .picnic-copy p:last-child { line-height: 1.7; opacity: .92; }
 
 /* ⑤ 알림받기 */
@@ -198,5 +196,6 @@ footer { display: flex; justify-content: space-between; gap: .75rem; padding: 1.
   html { scroll-behavior: auto; }
   .fairy-flight { display: none; }
   .logo-letters, .logo-flower, .hero-copy, .replay { opacity: 1; animation: none; }
+  .logo-flower { display: block; }
   .replay { display: none; }
 }

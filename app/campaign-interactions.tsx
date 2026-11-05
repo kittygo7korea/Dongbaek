@@ -13,22 +13,32 @@ export function BloomFormation() {
     <div className="formation">
       <div key={run} className="formation-stage" role="img" aria-label="동백요정이 날아와 꽃잎을 모으며 bLOOM Your Way 로고가 됩니다">
         <div className="formation-square">
-          {/* 로고를 두 겹으로 나눔: 글자(꽃 자리를 비움) + 꽃(요정이 들어간 뒤 나타남) */}
+          {/* 글자 층: 요정이 자리 잡은 뒤에 페이드인 (꽃 자리는 비워 둠) */}
           <div className="logo-letters" aria-hidden="true">
             <Image src="/bloom/logo.webp" alt="" width={900} height={900} sizes="(max-width: 720px) 92vw, 640px" preload />
           </div>
+          {/* 원본 로고 꽃: 움직임 줄이기 설정일 때만 표시 */}
           <div className="logo-flower" aria-hidden="true">
-            <Image src="/bloom/logo.webp" alt="" width={900} height={900} sizes="(max-width: 720px) 92vw, 640px" preload />
+            <Image src="/bloom/logo.webp" alt="" width={900} height={900} sizes="(max-width: 720px) 92vw, 640px" />
           </div>
           {/* 가로 이동(바깥)과 세로 이동(안쪽)을 다른 속도 곡선으로 움직여 미끄럼틀 같은 곡선을 만듭니다 */}
           <div className="fairy-flight" aria-hidden="true">
             <div className="fairy-drop">
-              {/* 발 방향 1시 → 3시 → 5시 → 8시로 시계방향 회전 */}
+              {/* 발 방향 1시 → 5시로만 시계방향 회전 */}
               <div className="fairy-spin">
-                <Image src="/bloom/fairy-white.png" alt="" width={1254} height={1254} sizes="300px" preload />
+                {/* 분홍 꽃 몸통만 남긴 층(그대로 로고의 꽃이 됨) + 얼굴·팔다리·잎까지 있는 전체 층(착지 후 페이드아웃) */}
+                <Image className="fairy-body" src="/bloom/fairy-white.png" alt="" width={1254} height={1254} sizes="300px" preload />
+                <Image className="fairy-full" src="/bloom/fairy-white.png" alt="" width={1254} height={1254} sizes="300px" preload />
               </div>
             </div>
           </div>
+          <svg className="svg-defs" aria-hidden="true" focusable="false">
+            {/* 분홍(빨강↑·초록↓)만 남기고 흰 팔다리·얼굴과 연두 잎은 투명하게 */}
+            <filter id="fairy-pink-only" colorInterpolationFilters="sRGB">
+              <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  3 -3 0 0 -0.4" result="pink" />
+              <feComposite in="pink" in2="SourceGraphic" operator="in" />
+            </filter>
+          </svg>
         </div>
       </div>
       <button className="replay" type="button" onClick={() => setRun((n) => n + 1)}>
