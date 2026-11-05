@@ -213,6 +213,22 @@ h2 { font-size: clamp(1.7rem, 3.6vw, 2.9rem); }
 }
 .svg-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
 
+/* ⑥ SNS 카드뉴스: 데스크톱은 5장을 한 줄에, 모바일은 옆으로 넘겨 보기 */
+.cardnews { background: var(--ivory); }
+.cardnews-note { color: var(--logo-pink); font-weight: 700; }
+.cardnews-track { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(.6rem, 1.6vw, 1.2rem); max-width: 1160px; margin: 0 auto; padding: 0; list-style: none; }
+.card-thumb { display: block; width: 100%; padding: 0; border: 0; border-radius: .9rem; overflow: hidden; background: none; cursor: zoom-in; box-shadow: 0 10px 28px #18250d1f; transition: transform .25s ease, box-shadow .25s ease; }
+.card-thumb:hover { transform: translateY(-4px); box-shadow: 0 16px 34px #18250d2e; }
+.card-thumb img { display: block; width: 100%; height: auto; }
+.card-dialog { width: min(92vw, 560px); }
+.card-dialog .zoom-body { padding: 3.6rem .8rem .8rem; }
+.card-dialog .zoom-body img { display: block; width: 100%; height: auto; max-height: calc(92svh - 4.4rem); object-fit: contain; border-radius: .7rem; }
+.card-dialog .zoom-close { top: .6rem; right: .8rem; } /* 카드 속 페이지 번호를 가리지 않게 카드 위 여백에 */
+@media (max-width: 720px) {
+  .cardnews-track { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 78vw; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: .8rem; }
+  .cardnews-track li { scroll-snap-align: center; }
+}
+
 footer { display: flex; justify-content: space-between; gap: .75rem; padding: 1.2rem clamp(1.2rem, 6vw, 5rem); background: var(--forest); color: #ffffffb0; border-top: 1px solid #ffffff1c; font-size: .8rem; }
 
 @media (max-width: 860px) {

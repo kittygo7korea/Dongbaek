@@ -148,6 +148,25 @@ export function ZoomableProduct({ image, name, detail, zoomLabel, closeLabel }: 
   );
 }
 
+/* SNS 카드뉴스 한 장: 누르면 <dialog>로 크게 보기 (Esc·닫기 버튼·바깥 클릭으로 닫힘) */
+export function ZoomableCard({ src, alt, zoomLabel, closeLabel }: { src: string; alt: string; zoomLabel: string; closeLabel: string }) {
+  const dialog = useRef<HTMLDialogElement>(null);
+
+  return (
+    <>
+      <button type="button" className="card-thumb" onClick={() => dialog.current?.showModal()} aria-label={`${zoomLabel}: ${alt}`}>
+        <Image src={src} alt={alt} width={1080} height={1350} sizes="(max-width: 720px) 78vw, 230px" />
+      </button>
+      <dialog ref={dialog} className="zoom-dialog card-dialog" aria-label={zoomLabel} onClick={(e) => { if (e.target === e.currentTarget) dialog.current?.close(); }}>
+        <div className="zoom-body">
+          <Image src={src} alt={alt} width={1080} height={1350} sizes="(max-width: 720px) 92vw, 560px" />
+          <button type="button" className="zoom-close" onClick={() => dialog.current?.close()} aria-label={closeLabel}>✕</button>
+        </div>
+      </dialog>
+    </>
+  );
+}
+
 /* 교육용 데모: 입력한 이메일은 어디에도 전송·저장하지 않습니다. */
 export function NotifyForm({ t, cta }: { t: Dictionary["notify"]; cta: string }) {
   const [done, setDone] = useState(false);

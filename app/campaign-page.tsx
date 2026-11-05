@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { AutoSwipeTrack, BloomFormation, NotifyForm, ZoomableProduct } from "./campaign-interactions";
+import { AutoSwipeTrack, BloomFormation, NotifyForm, ZoomableCard, ZoomableProduct } from "./campaign-interactions";
 import { dictionaries, type Locale } from "./dictionaries";
 
 /* 이미지·색 같은 언어와 무관한 값. 문구는 dictionaries.ts에서 같은 순서로 가져옵니다. */
@@ -151,6 +151,22 @@ export function CampaignPage({ lang }: { lang: Locale }) {
               <feComposite in="rough" in2="grain" operator="in" />
             </filter>
           </svg>
+        </section>
+
+        {/* ⑥ SNS 카드뉴스 (페이지 가장 아래) */}
+        <section className="section cardnews" id="cardnews" aria-labelledby="cardnews-title">
+          <div className="section-heading">
+            <p className="eyebrow">05 · ON INSTAGRAM</p>
+            <h2 id="cardnews-title">{t.cardnews.title}</h2>
+            <p>{t.cardnews.sub}{t.cardnews.note && <> <span className="cardnews-note">{t.cardnews.note}</span></>}</p>
+          </div>
+          <ol className="cardnews-track">
+            {t.cardnews.cards.map((alt, i) => (
+              <li key={i}>
+                <ZoomableCard src={`/cardnews/card-${i + 1}.png`} alt={alt} zoomLabel={t.cardnews.zoom} closeLabel={t.cardnews.close} />
+              </li>
+            ))}
+          </ol>
         </section>
       </main>
 

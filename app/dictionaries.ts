@@ -90,6 +90,21 @@ const ko = {
     fairyAlt: "나무 벤치에 앉아 쉬는 동백요정",
     shortformLabel: "동백마을 bLOOM Your Way 숏폼 영상",
   },
+  cardnews: {
+    title: "SNS 카드뉴스",
+    sub: "인스타그램에서 만나는 동백마을 × A2O Lite 이야기. 카드를 누르면 크게 볼 수 있어요.",
+    note: "",
+    zoom: "크게 보기",
+    close: "닫기",
+    // 카드 이미지 속 글자를 그대로 대체 텍스트로
+    cards: [
+      "1/5. 꽃님이가 두 손에 블룸이를 올려 바라보는 사진. 동백숲에 작은 친구가 살아요. 머리에 동백꽃을 단 아이, 블룸. 넘겨 보세요.",
+      "2/5. 씨앗을 줍고, 요리하고, 오일을 짜는 하루. 동백 씨앗 줍기, 고사리 파스타, 동백오일 짜기 사진 3장. 동백마을에서는 시간도 천천히 피어나요.",
+      "3/5. 동백숲 피크닉 사진. 동백마을 × A2O Lite. 올 겨울, 동백마을이 A2O Lite와 만나 새롭게 피어납니다.",
+      "4/5. 곧, 피어납니다. 동백마을 콜라보 굿즈, 2026 겨울 출시 예정. 흐릿하게 가린 굿즈 3종.",
+      "5/5. 꽃 자리가 빈 bLOOM 로고와 동백요정. 동백요정이 남긴 이름을 찾아보세요. 더 알아보기.",
+    ],
+  },
   footer: { note: "DONGBAEK VILLAGE × A2O LITE · 교육용 가상 캠페인", top: "맨 위로 ↑" },
 };
 
@@ -182,6 +197,20 @@ const en: Dictionary = {
     bloomAlt: "Bloom holding a red camellia high",
     fairyAlt: "The camellia fairy resting on a wooden bench",
     shortformLabel: "Dongbaek Village bLOOM Your Way short-form video",
+  },
+  cardnews: {
+    title: "SNS Card News",
+    sub: "The Dongbaek Village × A2O Lite story on Instagram. Tap a card to view it larger.",
+    note: "The cards are in Korean.",
+    zoom: "View larger",
+    close: "Close",
+    cards: [
+      "1/5. Kkotnim holding Bloom in both hands. A little friend lives in the camellia forest. Bloom, the one with a camellia on its head. Swipe to see more.",
+      "2/5. A day of gathering seeds, cooking and pressing oil. Three photos: gathering camellia seeds, fern pasta, pressing camellia oil. In Dongbaek Village, even time blooms slowly.",
+      "3/5. A camellia forest picnic. Dongbaek Village × A2O Lite. This winter, Dongbaek Village meets A2O Lite and blooms anew.",
+      "4/5. Soon, it blooms. Dongbaek Village collab goods, coming winter 2026. Three goods shown blurred.",
+      "5/5. The bLOOM logo with the flower missing, and the camellia fairy. Find the name the camellia fairy left behind. Learn more.",
+    ],
   },
   footer: { note: "DONGBAEK VILLAGE × A2O LITE · Educational fictional campaign", top: "Back to top ↑" },
 };
