@@ -136,7 +136,21 @@ export default function Home() {
         {/* 마무리 영상 (푸터 바로 위) */}
         <section className="film" aria-label="동백마을 캠페인 영상">
           <video src="/bloom/film.mp4" autoPlay muted loop playsInline controls preload="metadata" />
-          <p className="handwrite">너의 방식대로<br />피어나</p>
+          <div className="handwrite-row">
+            <p className="handwrite">너의 방식대로<br />피어나</p>
+            <Image className="handwrite-bloom" src="/bloom/bloom-flower.webp" alt="붉은 동백꽃을 높이 든 블룸이" width={1254} height={1254} sizes="(max-width: 720px) 34vw, 240px" />
+          </div>
+          <video className="shortform" src="/bloom/shortform.mp4" autoPlay muted loop playsInline controls preload="metadata" aria-label="동백마을 bLOOM Your Way 숏폼 영상" />
+          {/* 손글씨 크레용 질감: 가장자리를 거칠게 흔들고, 안료가 빠진 듯한 작은 빈틈을 냅니다 */}
+          <svg className="svg-defs" aria-hidden="true" focusable="false">
+            <filter id="crayon" x="-5%" y="-10%" width="110%" height="120%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="4" result="wobble" />
+              <feDisplacementMap in="SourceGraphic" in2="wobble" scale="4" xChannelSelector="R" yChannelSelector="G" result="rough" />
+              <feTurbulence type="fractalNoise" baseFrequency="1.3" numOctaves="2" seed="9" result="speck" />
+              <feColorMatrix in="speck" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.6 2.2" result="grain" />
+              <feComposite in="rough" in2="grain" operator="in" />
+            </filter>
+          </svg>
         </section>
       </main>
 
