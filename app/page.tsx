@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { BloomFormation, NotifyForm } from "./campaign-interactions";
+import { AutoSwipeTrack, BloomFormation, NotifyForm } from "./campaign-interactions";
 
 const day = [
   { image: "walk.png", w: 1672, h: 941, step: "아침", title: "동백숲 길 걷기", text: "현무암 돌길을 따라 천천히. 블룸이는 늘 한 걸음 앞에서 걸어요." },
@@ -83,7 +83,7 @@ export default function Home() {
             <h2 id="village-title">꽃님이와 블룸이가 안내하는<br />동백마을의 하루</h2>
             <p>마을 소녀 꽃님이와 동백숲 친구 블룸이를 따라, 느리게 피어나는 하루를 걸어 보세요.</p>
           </div>
-          <ol className="day-track">
+          <AutoSwipeTrack className="day-track">
             {day.map((d) => (
               <li key={d.title}>
                 <Image src={`/bloom/${d.image}`} alt={`${d.title}: 꽃님이와 블룸이`} width={d.w} height={d.h} sizes="(max-width: 720px) 82vw, 420px" />
@@ -92,8 +92,8 @@ export default function Home() {
                 <p>{d.text}</p>
               </li>
             ))}
-          </ol>
-          <p className="track-hint" aria-hidden="true">옆으로 넘겨 보세요 →</p>
+          </AutoSwipeTrack>
+          <p className="track-hint" aria-hidden="true">옆으로 넘겨 보세요</p>
         </section>
 
         {/* ④ 출시 예정 굿즈 + 피크닉 장면 */}

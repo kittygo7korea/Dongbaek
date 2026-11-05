@@ -1,7 +1,53 @@
 "use client";
 
 import Image from "next/image";
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
+
+/* 마을 하루 카드: 1초마다 다음 카드로 자동 스와이프, 끝에 닿으면 처음으로.
+   마우스를 올리거나 손가락으로 만지거나 키보드로 들어오면 멈추고, 손을 떼면 잠시 뒤 다시 넘깁니다.
+   '동작 줄이기' 설정이면 자동으로 넘기지 않습니다. */
+export function AutoSwipeTrack({ className, children }: { className?: string; children: ReactNode }) {
+  const track = useRef<HTMLOListElement>(null);
+
+  useEffect(() => {
+    const el = track.current;
+    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let paused = false;
+    let resumeTimer: number | undefined;
+    const pause = () => { paused = true; window.clearTimeout(resumeTimer); };
+    const resumeLater = () => { window.clearTimeout(resumeTimer); resumeTimer = window.setTimeout(() => { paused = false; }, 2000); };
+
+    const step = () => {
+      if (paused || document.hidden) return;
+      const card = el.firstElementChild as HTMLElement | null;
+      if (!card) return;
+      const gap = parseFloat(getComputedStyle(el).columnGap) || 0;
+      const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4;
+      el.scrollTo({ left: atEnd ? 0 : el.scrollLeft + card.offsetWidth + gap, behavior: "smooth" });
+    };
+    const timer = window.setInterval(step, 1000);
+
+    el.addEventListener("pointerenter", pause);
+    el.addEventListener("pointerleave", resumeLater);
+    el.addEventListener("touchstart", pause, { passive: true });
+    el.addEventListener("touchend", resumeLater);
+    el.addEventListener("focusin", pause);
+    el.addEventListener("focusout", resumeLater);
+    return () => {
+      window.clearInterval(timer);
+      window.clearTimeout(resumeTimer);
+      el.removeEventListener("pointerenter", pause);
+      el.removeEventListener("pointerleave", resumeLater);
+      el.removeEventListener("touchstart", pause);
+      el.removeEventListener("touchend", resumeLater);
+      el.removeEventListener("focusin", pause);
+      el.removeEventListener("focusout", resumeLater);
+    };
+  }, []);
+
+  return <ol ref={track} className={className}>{children}</ol>;
+}
 
 /* 동백요정이 숲에서 날아와 bLOOM 로고 속 꽃이 되는 장면.
    요정 그림의 꽃 몸통이 로고의 'OO' 꽃과 같은 자리·크기에 오도록
