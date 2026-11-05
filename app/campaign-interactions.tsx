@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
+import type { Dictionary } from "./dictionaries";
 
-/* 마을 하루 카드: 0.4초마다 다음 카드로 자동 스와이프, 끝에 닿으면 처음으로.
+/* 마을 하루 카드: 2초마다 한 장씩, 1.2초에 걸쳐 천천히 밀어 넘기는 자동 스와이프. 끝에 닿으면 처음으로.
    마우스를 올리거나 손가락으로 만지거나 키보드로 들어오면 멈추고, 손을 떼면 잠시 뒤 다시 넘깁니다.
    '동작 줄이기' 설정이면 자동으로 넘기지 않습니다. */
 export function AutoSwipeTrack({ className, children }: { className?: string; children: ReactNode }) {
@@ -17,25 +18,41 @@ export function AutoSwipeTrack({ className, children }: { className?: string; ch
       const card = el.firstElementChild as HTMLElement | null;
       return card ? card.offsetWidth + (parseFloat(getComputedStyle(el).columnGap) || 0) : 0;
     };
-    // 넘기는 간격이 부드러운 스크롤 시간보다 짧을 수 있어, 현재 스크롤 위치 대신 '몇 번째 카드인지'로 다음 위치를 계산
-    let index = 0;
-    const syncIndex = () => { const s = cardStep(); index = s ? Math.round(el.scrollLeft / s) : 0; };
-
     let paused = false;
     let resumeTimer: number | undefined;
     const pause = () => { paused = true; window.clearTimeout(resumeTimer); };
-    const resumeLater = () => { window.clearTimeout(resumeTimer); resumeTimer = window.setTimeout(() => { syncIndex(); paused = false; }, 2000); };
+    const resumeLater = () => { window.clearTimeout(resumeTimer); resumeTimer = window.setTimeout(() => { paused = false; }, 2000); };
+
+    // 브라우저 기본 부드러운 스크롤은 0.3~0.5초로 고정이라, 손으로 천천히 넘기듯 1.2초 동안 직접 움직임
+    let frame = 0;
+    const slideTo = (target: number) => {
+      cancelAnimationFrame(frame);
+      const from = el.scrollLeft;
+      const start = performance.now();
+      const duration = 1200;
+      el.style.scrollSnapType = "none"; // 움직이는 동안 카드 맞춤(스냅)이 끼어들지 않게
+      const tick = (now: number) => {
+        if (paused) { el.style.scrollSnapType = ""; return; }
+        const p = Math.min(1, (now - start) / duration);
+        const ease = p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2; // 천천히 출발 → 가속 → 천천히 멈춤
+        el.scrollLeft = from + (target - from) * ease;
+        if (p < 1) frame = requestAnimationFrame(tick);
+        else el.style.scrollSnapType = "";
+      };
+      frame = requestAnimationFrame(tick);
+    };
 
     const step = () => {
       if (paused || document.hidden) return;
       const s = cardStep();
       if (!s) return;
       const max = el.scrollWidth - el.clientWidth;
-      const last = Math.ceil((max - 4) / s);
-      index = index >= last ? 0 : index + 1;
-      el.scrollTo({ left: Math.min(index * s, max), behavior: "smooth" });
+      // 넘기는 간격(2초)이 미끄러지는 시간(1.2초)보다 길어, 매번 지금 보이는 카드 기준으로 한 장만 넘김
+      const atEnd = el.scrollLeft >= max - 4;
+      const next = Math.round(el.scrollLeft / s) + 1;
+      slideTo(atEnd ? 0 : Math.min(next * s, max));
     };
-    const timer = window.setInterval(step, 400); // 1초의 2.5배 속도 → 0.4초마다 다음 카드
+    const timer = window.setInterval(step, 2000); // 2초에 한 컷
 
     el.addEventListener("pointerenter", pause);
     el.addEventListener("pointerleave", resumeLater);
@@ -46,6 +63,7 @@ export function AutoSwipeTrack({ className, children }: { className?: string; ch
     return () => {
       window.clearInterval(timer);
       window.clearTimeout(resumeTimer);
+      cancelAnimationFrame(frame);
       el.removeEventListener("pointerenter", pause);
       el.removeEventListener("pointerleave", resumeLater);
       el.removeEventListener("touchstart", pause);
@@ -61,12 +79,12 @@ export function AutoSwipeTrack({ className, children }: { className?: string; ch
 /* 동백요정이 숲에서 날아와 bLOOM 로고 속 꽃이 되는 장면.
    요정 그림의 꽃 몸통이 로고의 'OO' 꽃과 같은 자리·크기에 오도록
    .fairy-flight 위치값(globals.css)을 로고 이미지 기준으로 맞춰 두었습니다. */
-export function BloomFormation() {
+export function BloomFormation({ label, replay }: { label: string; replay: string }) {
   const [run, setRun] = useState(0);
 
   return (
     <div className="formation">
-      <div key={run} className="formation-stage" role="img" aria-label="동백요정이 날아와 꽃잎을 모으며 bLOOM Your Way 로고가 됩니다">
+      <div key={run} className="formation-stage" role="img" aria-label={label}>
         <div className="formation-square">
           {/* 글자 층: 요정이 자리 잡은 뒤에 페이드인 (꽃 자리는 비워 둠) */}
           <div className="logo-letters" aria-hidden="true">
@@ -97,43 +115,41 @@ export function BloomFormation() {
         </div>
       </div>
       <button className="replay" type="button" onClick={() => setRun((n) => n + 1)}>
-        <span aria-hidden="true">↺</span> 요정이 피어나는 장면 다시 보기
+        <span aria-hidden="true">↺</span> {replay}
       </button>
     </div>
   );
 }
 
 /* 굿즈 사진을 누르면 크게 보기. <dialog>를 써서 Esc 키·닫기 버튼·바깥 어두운 영역 클릭으로 닫힘 */
-export function ZoomableProduct({ image, name, detail }: { image: string; name: string; detail: string }) {
+export function ZoomableProduct({ image, name, detail, zoomLabel, closeLabel }: { image: string; name: string; detail: string; zoomLabel: string; closeLabel: string }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const src = `/bloom/${image}.webp`;
 
   return (
     <>
-      <button type="button" className="product-photo" onClick={() => dialog.current?.showModal()} aria-label={`${name} 크게 보기`}>
+      <button type="button" className="product-photo" onClick={() => dialog.current?.showModal()} aria-label={`${name} · ${zoomLabel}`}>
         <Image src={src} alt={name} fill sizes="(max-width: 720px) 45vw, 340px" />
         <span className="zoom-badge" aria-hidden="true">
           <svg viewBox="0 0 24 24" focusable="false"><path d="M10.5 4a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13Zm0 0M15.5 15.5 20 20M10.5 7.5v6M7.5 10.5h6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
         </span>
       </button>
-      <dialog ref={dialog} className="zoom-dialog" aria-label={`${name} 크게 보기`} onClick={(e) => { if (e.target === e.currentTarget) dialog.current?.close(); }}>
+      <dialog ref={dialog} className="zoom-dialog" aria-label={`${name} · ${zoomLabel}`} onClick={(e) => { if (e.target === e.currentTarget) dialog.current?.close(); }}>
         <div className="zoom-body">
           <div className="zoom-frame">
             <Image src={src} alt={name} fill sizes="(max-width: 720px) 92vw, 720px" />
           </div>
           <p className="zoom-name">{name}</p>
           <p className="zoom-detail">{detail}</p>
-          <button type="button" className="zoom-close" onClick={() => dialog.current?.close()} aria-label="닫기">✕</button>
+          <button type="button" className="zoom-close" onClick={() => dialog.current?.close()} aria-label={closeLabel}>✕</button>
         </div>
       </dialog>
     </>
   );
 }
 
-const interests = ["블룸 컵", "블룸백", "캠핑 의자", "모자", "씨앗 파우치", "동백 에센스"];
-
 /* 교육용 데모: 입력한 이메일은 어디에도 전송·저장하지 않습니다. */
-export function NotifyForm() {
+export function NotifyForm({ t, cta }: { t: Dictionary["notify"]; cta: string }) {
   const [done, setDone] = useState(false);
   const [error, setError] = useState("");
 
@@ -142,8 +158,8 @@ export function NotifyForm() {
     const form = event.currentTarget;
     const email = (form.elements.namedItem("email") as HTMLInputElement).value.trim();
     const agreed = (form.elements.namedItem("agree") as HTMLInputElement).checked;
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return setError("이메일 주소를 다시 확인해 주세요.");
-    if (!agreed) return setError("알림 발송을 위한 개인정보 수집에 동의해 주세요.");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return setError(t.errorEmail);
+    if (!agreed) return setError(t.errorAgree);
     setError("");
     setDone(true);
   }
@@ -152,9 +168,9 @@ export function NotifyForm() {
     return (
       <div className="notify-done" role="status">
         <Image src="/bloom/logo.webp" alt="bLOOM Your Way" width={900} height={900} sizes="260px" />
-        <p className="done-title">알림 신청이 완료됐어요.</p>
-        <p>올 겨울, 블룸이 피어나는 날 가장 먼저 찾아갈게요.</p>
-        <button className="text-button" type="button" onClick={() => setDone(false)}>다른 이메일로 신청하기</button>
+        <p className="done-title">{t.doneTitle}</p>
+        <p>{t.doneText}</p>
+        <button className="text-button" type="button" onClick={() => setDone(false)}>{t.again}</button>
       </div>
     );
   }
@@ -162,12 +178,12 @@ export function NotifyForm() {
   return (
     <form className="notify-form" onSubmit={submit} noValidate>
       <label className="field">
-        <span>알림 받을 이메일</span>
+        <span>{t.emailLabel}</span>
         <input name="email" type="email" inputMode="email" autoComplete="email" placeholder="you@example.com" required />
       </label>
       <fieldset className="chips">
-        <legend>관심 있는 굿즈 <small>(선택)</small></legend>
-        {interests.map((item) => (
+        <legend>{t.interestLegend} <small>{t.optional}</small></legend>
+        {t.interests.map((item) => (
           <label key={item} className="chip">
             <input type="checkbox" name="interest" value={item} />
             <span>{item}</span>
@@ -176,11 +192,11 @@ export function NotifyForm() {
       </fieldset>
       <label className="agree">
         <input type="checkbox" name="agree" required />
-        <span>출시 알림 발송을 위해 이메일을 수집·이용하는 데 동의합니다. (출시 후 파기)</span>
+        <span>{t.agree}</span>
       </label>
       <p className="form-error" role="alert">{error}</p>
-      <button className="button button-large" type="submit">알림받기</button>
-      <p className="demo-note">교육용 가상 캠페인 데모입니다. 입력한 이메일은 전송되거나 저장되지 않습니다.</p>
+      <button className="button button-large" type="submit">{cta}</button>
+      <p className="demo-note">{t.demo}</p>
     </form>
   );
 }

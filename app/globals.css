@@ -30,6 +30,12 @@ button { cursor: pointer; font: inherit; }
 .wordmark img { display: block; width: clamp(96px, 14vw, 120px); height: auto; }
 nav { display: flex; gap: 1.8rem; font-size: .88rem; font-weight: 600; }
 nav a:hover, .scroll-hint:hover, footer a:hover { text-decoration: underline; text-underline-offset: .3em; }
+/* 언어 전환 KO / EN */
+.header-actions { display: flex; align-items: center; gap: .75rem; }
+.lang-switch { display: flex; padding: 3px; border: 1px solid var(--line); border-radius: 3rem; background: #fff; }
+.lang-switch a { padding: .3rem .6rem; border-radius: 3rem; font-size: .75rem; font-weight: 700; letter-spacing: .04em; color: var(--muted); }
+.lang-switch a:hover { color: var(--forest); }
+.lang-switch a[aria-current="page"] { background: var(--forest); color: #fff; }
 
 /* 버튼 (CTA는 '알림받기' 하나) */
 .button { display: inline-flex; justify-content: center; align-items: center; gap: .5rem; border: 0; background: var(--logo-pink); color: #fff; padding: .8rem 1.5rem; border-radius: 3rem; font-weight: 750; font-size: .95rem; transition: background .2s, transform .2s; }
@@ -193,6 +199,9 @@ h2 { font-size: clamp(1.7rem, 3.6vw, 2.9rem); }
   /* 모바일: 영상 옆 공간이 없어 '피어나' 바로 오른쪽에 두고, 영상과 겹치지 않게 아래 여백 확보 */
   .handwrite-row { --bw: 152px; padding-bottom: 2.5rem; }
   .handwrite-bloom { left: calc(50% + 1.45em - var(--bw) * .19); }
+  /* 영어 둘째 줄 'your way'가 '피어나'보다 길어 블룸이를 조금 오른쪽으로, 조금 작게 */
+  html[lang="en"] .handwrite-row { --bw: 140px; }
+  html[lang="en"] .handwrite-bloom { left: calc(50% + 2.3em - var(--bw) * .19); }
 }
 .shortform-wrap { position: relative; width: min(100%, 380px); margin: clamp(2rem, 5vw, 3.5rem) auto 0; }
 .film .shortform { display: block; width: 100%; max-height: none; aspect-ratio: 9 / 16; border-radius: 1rem; background: #000; }
