@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&family=Gaegu:wght@700&display=swap");
 @import "tailwindcss";
 
 /* bLOOM YOUR WAY 컬러시트 (2026.11.02) */
@@ -12,6 +12,7 @@
   --type-pink: #fc40bc;
   --type-orange: #fd7830;
   --light-yellow: #fefb66;
+  --acid-yellow: #e8ff00;
   --ivory: #fdf8eb;
   --beige: #cbb8a1;
   --line: #e4dccb;
@@ -155,6 +156,8 @@ h2 { font-size: clamp(1.7rem, 3.6vw, 2.9rem); }
 /* 마무리 영상 */
 .film { padding: 0 clamp(1.2rem, 6vw, 5rem) clamp(3rem, 6vw, 5rem); background: var(--forest); }
 .film video { display: block; width: 100%; max-width: 1160px; max-height: 80svh; margin: 0 auto; border-radius: 1rem; background: #000; }
+/* 캠페인 메인 손글씨 (타이포시트 LEVEL 1: 두 줄, 행간 1.05–1.15, 회전 ±10° 이내) */
+.handwrite { margin: clamp(2rem, 5vw, 3.5rem) 0 0; color: var(--acid-yellow); font-family: "Gaegu", "Noto Sans KR", cursive; font-weight: 700; font-size: clamp(3.2rem, 10vw, 7rem); line-height: 1.08; letter-spacing: -.02em; text-align: center; transform: rotate(-4deg); }
 
 footer { display: flex; justify-content: space-between; gap: .75rem; padding: 1.2rem clamp(1.2rem, 6vw, 5rem); background: var(--forest); color: #ffffffb0; border-top: 1px solid #ffffff1c; font-size: .8rem; }
 

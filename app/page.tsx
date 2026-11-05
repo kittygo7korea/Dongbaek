@@ -136,6 +136,7 @@ export default function Home() {
         {/* 마무리 영상 (푸터 바로 위) */}
         <section className="film" aria-label="동백마을 캠페인 영상">
           <video src="/bloom/film.mp4" autoPlay muted loop playsInline controls preload="metadata" />
+          <p className="handwrite">너의 방식대로<br />피어나</p>
         </section>
       </main>
 
