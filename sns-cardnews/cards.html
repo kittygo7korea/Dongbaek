@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>동백마을 × A2O Lite SNS 카드뉴스</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800;900&family=Gaegu:wght@400;700&display=block">
+<style>
+  /* 인스타그램 피드 4:5 (1080×1350). ?n=1~5 로 한 장만 보여 주고, 없으면 5장을 세로로 나열 */
+  :root {
+    --logo-pink: #ff0176; --forest: #18250d; --bloom-green: #c4d88d; --mint: #cce8d2;
+    --type-green: #6f9354; --light-yellow: #fefb66; --ivory: #fdf8eb; --beige: #cbb8a1; --muted: #4d5644;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { background: #888; }
+  body { font-family: "Noto Sans KR", "Malgun Gothic", sans-serif; word-break: keep-all; color: var(--forest); }
+  .card { position: relative; width: 1080px; height: 1350px; overflow: hidden; margin: 0 auto 40px; isolation: isolate; }
+  body.single { background: transparent; }
+  body.single .card { margin: 0; }
+  body.single .card:not(.on) { display: none; }
+
+  /* 공통 머리·꼬리 */
+  .top { position: absolute; z-index: 5; top: 56px; left: 64px; right: 64px; display: flex; justify-content: space-between; align-items: center; }
+  .top img { height: 64px; width: auto; }
+  /* 흰 글자 로고(logo.webp)는 투명 여백이 커서 글자 부분만 잘라 보여 줌 (글자: 가로 7~93%, 세로 37~68%) */
+  .logo-crop { position: relative; width: 224px; height: 82px; overflow: hidden; }
+  .top .logo-crop img { position: absolute; width: 260px; height: 260px; left: -18px; top: -96px; }
+  .page { font-size: 26px; font-weight: 700; letter-spacing: .08em; }
+  .eyebrow { font-size: 24px; font-weight: 800; letter-spacing: .16em; color: var(--logo-pink); }
+  .swipe { position: absolute; z-index: 5; right: 64px; bottom: 60px; display: flex; align-items: center; gap: 14px; font-size: 26px; font-weight: 700; }
+  .swipe svg { width: 54px; height: 24px; }
+  .bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+  .dark { color: #fff; }
+  .dark .page { color: #ffffffcc; }
+
+  /* 1. 멈추게 하기 */
+  .c1 .bg { object-position: 50% 50%; transform: scale(1.0); }
+  .c1::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, #18250d66 0%, transparent 22%, transparent 48%, #18250df2 78%); }
+  .c1 .copy { position: absolute; left: 64px; right: 64px; bottom: 150px; }
+  .c1 h1 { margin: 22px 0 26px; font-size: 104px; line-height: 1.12; font-weight: 900; letter-spacing: -.04em; }
+  .c1 .sub { font-size: 40px; font-weight: 700; color: var(--light-yellow); }
+
+  /* 2. 마을의 하루 */
+  .c2 { background: var(--ivory); }
+  .c2 .copy { position: absolute; top: 170px; left: 64px; right: 64px; }
+  .c2 h1 { margin-top: 20px; font-size: 76px; line-height: 1.18; font-weight: 900; letter-spacing: -.04em; }
+  .c2 h1 em { font-style: normal; color: var(--logo-pink); }
+  .shots { position: absolute; left: 64px; right: 64px; top: 560px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .shots figure { margin: 0; }
+  .shots img { display: block; width: 100%; height: 470px; object-fit: cover; border-radius: 28px; }
+  .shots figcaption { margin-top: 18px; font-size: 28px; font-weight: 800; text-align: center; }
+  .shots figcaption span { display: block; margin-bottom: 4px; font-size: 20px; letter-spacing: .1em; color: var(--type-green); }
+  .c2 .note { position: absolute; left: 64px; bottom: 66px; font-family: "Gaegu", cursive; font-size: 44px; font-weight: 700; color: var(--type-green); }
+
+  /* 3. 콜라보 발표 */
+  /* 사진을 아래쪽 1000px에만 깔아, 위쪽 카피가 우산·인물과 겹치지 않고 숲색 바탕 위에 오도록 */
+  .c3 { background: var(--forest); }
+  .c3 .bg { top: auto; bottom: 0; height: 1000px; object-position: 12% 50%; } /* 왼쪽 의자의 블룸이까지 보이게 */
+  .c3::after { content: ""; position: absolute; left: 0; right: 0; top: 350px; height: 260px; z-index: -1; background: linear-gradient(180deg, var(--forest), transparent); }
+  .c3 .copy { position: absolute; top: 170px; left: 64px; right: 64px; }
+  .c3 .collab { margin: 18px 0 26px; font-size: 92px; font-weight: 900; letter-spacing: -.03em; line-height: 1.05; }
+  .c3 .collab b { color: var(--logo-pink); font-weight: 900; }
+  .c3 .msg { font-size: 42px; line-height: 1.45; font-weight: 700; }
+  .c3 .msg em { font-style: normal; color: var(--light-yellow); }
+
+  /* 4. 굿즈 티저 */
+  .c4 { background: radial-gradient(ellipse at 50% 38%, #fffbf3 0%, #f6dfe2 70%); }
+  .c4 .copy { position: absolute; top: 170px; left: 64px; right: 64px; text-align: center; }
+  .c4 h1 { margin: 22px 0 18px; font-size: 120px; font-weight: 900; letter-spacing: -.05em; }
+  .c4 .sub { font-size: 34px; font-weight: 700; color: var(--muted); }
+  .badge { display: inline-block; margin-top: 26px; padding: 14px 30px; border-radius: 60px; background: var(--forest); color: var(--light-yellow); font-size: 30px; font-weight: 800; }
+  .teaser { position: absolute; left: 0; right: 0; bottom: 120px; display: flex; justify-content: center; align-items: flex-end; gap: 10px; }
+  .teaser .item { position: relative; width: 330px; height: 420px; border-radius: 36px; background: #fff; overflow: hidden; box-shadow: 0 18px 50px #a3325422; }
+  .teaser .item:nth-child(2) { height: 480px; }
+  .teaser img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 40px; filter: blur(7px) saturate(1.1); transform: scale(1.04); }
+  .teaser .q { position: absolute; inset: 0; display: grid; place-items: center; font-size: 120px; font-weight: 900; color: #ffffffe6; text-shadow: 0 6px 30px #a3325466; }
+
+  /* 5. 더 알아보기 */
+  .c5 .bg { object-position: 50% 40%; }
+  .c5::after { content: ""; position: absolute; inset: 0; z-index: -1; background: radial-gradient(ellipse at 50% 42%, #18250d66, #18250df0 78%); }
+  .c5 .copy { position: absolute; top: 170px; left: 64px; right: 64px; text-align: center; }
+  .c5 h1 { margin-top: 20px; font-size: 76px; line-height: 1.22; font-weight: 900; letter-spacing: -.04em; }
+  .c5 h1 em { font-style: normal; color: var(--light-yellow); }
+  /* 로고 글자만 흐릿하게, 꽃 자리는 비워 둠(웹사이트 히어로에서 완성되는 장면) */
+  .stage { position: absolute; left: 50%; top: 480px; width: 900px; height: 900px; margin-left: -450px; }
+  .letters { position: absolute; inset: 0; width: 100%; opacity: .5;
+    -webkit-mask-image: radial-gradient(13.4% 13.6% at 46.97% 48.56%, transparent 98%, #000 100%), radial-gradient(10.3% 10.3% at 60.6% 50.5%, transparent 69%, #000 71%, #000 98%, transparent 100%);
+            mask-image: radial-gradient(13.4% 13.6% at 46.97% 48.56%, transparent 98%, #000 100%), radial-gradient(10.3% 10.3% at 60.6% 50.5%, transparent 69%, #000 71%, #000 98%, transparent 100%); }
+  .slot { position: absolute; left: 46.97%; top: 48.56%; width: 24%; height: 25%; transform: translate(-50%, -50%); border: 4px dashed #ffffff66; border-radius: 50%; }
+  .fairy { position: absolute; width: 330px; left: 600px; top: -10px; transform: rotate(30deg); }
+  .cta { position: absolute; left: 50%; bottom: 110px; transform: translateX(-50%); display: flex; align-items: center; gap: 18px; padding: 30px 60px; border-radius: 80px; background: var(--logo-pink); color: #fff; font-size: 44px; font-weight: 800; white-space: nowrap; box-shadow: 0 16px 40px #ff017655; }
+  .cta svg { width: 54px; height: 26px; }
+  .c5 .hint { position: absolute; left: 0; right: 0; bottom: 56px; text-align: center; font-size: 26px; color: #ffffffb0; }
+</style>
+</head>
+<body>
+
+<!-- 1 / 5 · 멈추게 하기 -->
+<section class="card c1 dark" data-n="1">
+  <img class="bg" src="../Resource/A girl with Bloom.png" alt="">
+  <div class="top"><span class="logo-crop"><img src="../public/bloom/logo.webp" alt="bLOOM Your Way"></span><span class="page">1 / 5</span></div>
+  <div class="copy">
+    <p class="eyebrow" style="color:var(--light-yellow)">DONGBAEK VILLAGE</p>
+    <h1>동백숲에<br>작은 친구가 살아요</h1>
+    <p class="sub">머리에 동백꽃을 단 아이, 블룸</p>
+  </div>
+  <div class="swipe">넘겨 보세요 <svg viewBox="0 0 54 24"><path d="M2 12h46M38 3l10 9-10 9" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+</section>
+
+<!-- 2 / 5 · 마을의 하루 -->
+<section class="card c2" data-n="2">
+  <div class="top"><img src="../public/bloom/header-logo.webp" alt="bLOOM"><span class="page">2 / 5</span></div>
+  <div class="copy">
+    <p class="eyebrow">A DAY IN DONGBAEK VILLAGE</p>
+    <h1>씨앗을 줍고, 요리하고,<br><em>오일을 짜는 하루</em></h1>
+  </div>
+  <div class="shots">
+    <figure><img src="../public/bloom/seed.webp" alt="" style="object-position:62% 50%"><figcaption><span>MORNING</span>동백 씨앗 줍기</figcaption></figure>
+    <figure><img src="../public/bloom/pasta-cooking.webp" alt="" style="object-position:55% 50%"><figcaption><span>NOON</span>고사리 파스타</figcaption></figure>
+    <figure><img src="../public/bloom/oil-extracting.webp" alt="" style="object-position:50% 50%"><figcaption><span>AFTERNOON</span>동백오일 짜기</figcaption></figure>
+  </div>
+  <p class="note">동백마을에서는 시간도 천천히 피어나요</p>
+</section>
+
+<!-- 3 / 5 · 콜라보 발표 -->
+<section class="card c3 dark" data-n="3">
+  <img class="bg" src="../public/bloom/picnic-with-goods.webp" alt="">
+  <div class="top"><span class="logo-crop"><img src="../public/bloom/logo.webp" alt="bLOOM Your Way"></span><span class="page">3 / 5</span></div>
+  <div class="copy">
+    <p class="eyebrow" style="color:var(--light-yellow)">COLLABORATION NEWS</p>
+    <p class="collab">동백마을 <b>×</b><br>A2O Lite</p>
+    <p class="msg">올 겨울, 동백마을이 A2O Lite와 만나<br><em>새롭게 피어납니다</em></p>
+  </div>
+</section>
+
+<!-- 4 / 5 · 굿즈 티저 -->
+<section class="card c4" data-n="4">
+  <div class="top"><img src="../public/bloom/header-logo.webp" alt="bLOOM"><span class="page">4 / 5</span></div>
+  <div class="copy">
+    <p class="eyebrow">COMING THIS WINTER</p>
+    <h1>곧, 피어납니다.</h1>
+    <p class="sub">동백마을 콜라보 굿즈</p>
+    <span class="badge">2026 겨울 출시 예정</span>
+  </div>
+  <div class="teaser">
+    <div class="item"><img src="../public/bloom/cups.webp" alt=""><span class="q">?</span></div>
+    <div class="item"><img src="../public/bloom/bag.webp" alt=""><span class="q">?</span></div>
+    <div class="item"><img src="../public/bloom/camping-chair.webp" alt=""><span class="q">?</span></div>
+  </div>
+</section>
+
+<!-- 5 / 5 · 더 알아보기 -->
+<section class="card c5 dark" data-n="5">
+  <img class="bg" src="../public/bloom/forest.webp" alt="">
+  <div class="top"><span></span><span class="page">5 / 5</span></div>
+  <div class="copy">
+    <p class="eyebrow" style="color:var(--light-yellow)">THE BLOOM SIGN</p>
+    <h1>동백요정이 남긴<br><em>이름을 찾아보세요</em></h1>
+  </div>
+  <div class="stage">
+    <img class="letters" src="../public/bloom/logo.webp" alt="">
+    <span class="slot"></span>
+    <img class="fairy" src="../public/bloom/fairy-white.png" alt="">
+  </div>
+  <div class="cta">더 알아보기 <svg viewBox="0 0 54 26"><path d="M2 13h46M38 3l10 10-10 10" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <p class="hint">프로필 링크에서 동백마을 × A2O Lite 소식을 만나 보세요</p>
+</section>
+
+<script>
+  const n = new URLSearchParams(location.search).get("n");
+  if (n) {
+    document.body.classList.add("single");
+    document.querySelector(`.card[data-n="${n}"]`).classList.add("on");
+  }
+</script>
+</body>
+</html>
