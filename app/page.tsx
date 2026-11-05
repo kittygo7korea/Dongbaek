@@ -138,10 +138,10 @@ export default function Home() {
           <video src="/bloom/film.mp4" autoPlay muted loop playsInline controls preload="metadata" />
           <div className="handwrite-row">
             <p className="handwrite">너의 방식대로<br />피어나</p>
-            <Image className="handwrite-bloom" src="/bloom/bloom-flower.webp" alt="붉은 동백꽃을 높이 든 블룸이" width={1254} height={1254} sizes="(max-width: 720px) 34vw, 240px" />
+            <Image className="handwrite-bloom" src="/bloom/bloom-flower.webp" alt="붉은 동백꽃을 높이 든 블룸이" width={1254} height={1254} sizes="(max-width: 720px) 34vw, 288px" />
           </div>
           <div className="shortform-wrap">
-            <Image className="shortform-fairy" src="/bloom/fairy-walk.png" alt="손을 흔들며 걸어가는 동백요정" width={1254} height={1254} sizes="160px" />
+            <Image className="shortform-fairy" src="/bloom/fairy-bench.webp" alt="나무 벤치에 앉아 쉬는 동백요정" width={1307} height={1203} sizes="180px" />
             <video className="shortform" src="/bloom/shortform.mp4" autoPlay muted loop playsInline controls preload="metadata" aria-label="동백마을 bLOOM Your Way 숏폼 영상" />
           </div>
           {/* 손글씨 크레용 질감: 가장자리를 거칠게 흔들고, 안료가 빠진 듯한 작은 빈틈을 냅니다 */}

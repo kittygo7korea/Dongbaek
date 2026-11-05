@@ -170,7 +170,7 @@ h2 { font-size: clamp(1.7rem, 3.6vw, 2.9rem); }
 /* 캠페인 메인 손글씨 (타이포시트 LEVEL 1: 두 줄, 행간 1.05–1.15, 회전 ±10° 이내) */
 .handwrite-row { display: flex; align-items: center; justify-content: center; gap: clamp(.5rem, 3vw, 2.5rem); max-width: 1160px; margin: clamp(2rem, 5vw, 3.5rem) auto 0; }
 .handwrite { margin: 0; color: var(--acid-yellow); font-family: "Gaegu", "Noto Sans KR", cursive; font-weight: 400; font-size: clamp(2rem, 9.5vw, 7.2rem); white-space: nowrap; line-height: 1.08; letter-spacing: -.01em; text-align: center; transform: rotate(-4deg); filter: url(#crayon); }
-.handwrite-bloom { flex: none; width: clamp(84px, 20vw, 240px); height: auto; transform: rotate(6deg); }
+.handwrite-bloom { flex: none; width: clamp(101px, 24vw, 288px); height: auto; transform: rotate(6deg); } /* 기존 대비 120% */
 .shortform-wrap { position: relative; width: min(100%, 380px); margin: clamp(2rem, 5vw, 3.5rem) auto 0; }
 .film .shortform { display: block; width: 100%; max-height: none; aspect-ratio: 9 / 16; border-radius: 1rem; background: #000; }
 /* 숏폼 왼쪽의 작은 동백요정: 영상 높이의 20% */
