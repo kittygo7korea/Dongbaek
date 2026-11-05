@@ -13,14 +13,21 @@ export function BloomFormation() {
     <div className="formation">
       <div key={run} className="formation-stage" role="img" aria-label="동백요정이 날아와 꽃잎을 모으며 bLOOM Your Way 로고가 됩니다">
         <div className="formation-square">
-          {Array.from({ length: 8 }, (_, i) => (
-            <span key={i} className="petal" style={{ ["--i" as string]: i }} aria-hidden="true" />
-          ))}
-          <div className="fairy-flight" aria-hidden="true">
-            <Image src="/bloom/fairy-white.png" alt="" width={1254} height={1254} sizes="300px" preload />
-          </div>
-          <div className="logo-formed" aria-hidden="true">
+          {/* 로고를 두 겹으로 나눔: 글자(꽃 자리를 비움) + 꽃(요정이 들어간 뒤 나타남) */}
+          <div className="logo-letters" aria-hidden="true">
             <Image src="/bloom/logo.webp" alt="" width={900} height={900} sizes="(max-width: 720px) 92vw, 640px" preload />
+          </div>
+          <div className="logo-flower" aria-hidden="true">
+            <Image src="/bloom/logo.webp" alt="" width={900} height={900} sizes="(max-width: 720px) 92vw, 640px" preload />
+          </div>
+          {/* 가로 이동(바깥)과 세로 이동(안쪽)을 다른 속도 곡선으로 움직여 미끄럼틀 같은 곡선을 만듭니다 */}
+          <div className="fairy-flight" aria-hidden="true">
+            <div className="fairy-drop">
+              {/* 발 방향 1시 → 3시 → 5시 → 8시로 시계방향 회전 */}
+              <div className="fairy-spin">
+                <Image src="/bloom/fairy-white.png" alt="" width={1254} height={1254} sizes="300px" preload />
+              </div>
+            </div>
           </div>
         </div>
       </div>
