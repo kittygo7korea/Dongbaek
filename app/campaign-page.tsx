@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { AutoSwipeTrack, BloomFormation, NotifyForm, ZoomableCard, ZoomableProduct } from "./campaign-interactions";
+import { AutoSwipeTrack, BloomFormation, GoodsShop, NotifyDialogButton, NotifyForm, RevealOnScroll, ZoomableCard } from "./campaign-interactions";
 import { dictionaries, type Locale } from "./dictionaries";
 import { neon } from "./neon";
 
@@ -37,10 +37,12 @@ export function CampaignPage({ lang }: { lang: Locale }) {
             <Link href="/" hrefLang="ko" lang="ko" aria-current={lang === "ko" ? "page" : undefined}>KO</Link>
             <Link href="/en" hrefLang="en" lang="en" aria-current={lang === "en" ? "page" : undefined}>EN</Link>
           </div>
-          <a className="button button-small" href="#notify">{t.notifyCta}</a>
+          {/* 알림받기: 이메일·닉네임·받을 소식을 고르는 신청 창 */}
+          <NotifyDialogButton label={t.notifyCta} t={t.notifyDialog} />
         </div>
       </header>
 
+      <RevealOnScroll />
       <main id="top">
         {/* ① 히어로: 동백요정 → bLOOM 로고 */}
         <section className="hero" aria-labelledby="hero-title">
@@ -103,17 +105,8 @@ export function CampaignPage({ lang }: { lang: Locale }) {
             <h2 id="goods-title">{t.goods.title}</h2>
             <p>{neon(t.goods.sub)} · <strong>{t.goods.status}</strong></p>
           </div>
-          <ul className="product-grid">
-            {t.goods.items.map((g, i) => (
-              <li key={goodsImages[i]}>
-                <span className="status">{t.goods.status}</span>
-                <ZoomableProduct image={goodsImages[i]} name={g.name} detail={neon(g.detail)} zoomLabel={t.goods.zoom} closeLabel={t.goods.close} />
-                <h3>{g.name}</h3>
-                <p>{neon(g.detail)}</p>
-                <a className="product-notify" href="#notify">{t.notifyCta} <span aria-hidden="true">→</span></a>
-              </li>
-            ))}
-          </ul>
+          {/* 굿즈 카드(담아두기) + 장바구니(출시 알림받기) */}
+          <GoodsShop images={goodsImages} t={t.goods} />
         </section>
 
         <section className="picnic" aria-labelledby="picnic-title">
