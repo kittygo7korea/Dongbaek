@@ -131,7 +131,6 @@ const ko = {
     addressLabel: "주소",
     address: "제주특별자치도 서귀포시 남원읍 한신로531번길 22-1",
     open: "구글 지도에서 열기",
-    mapTitle: "동백마을방문자센터 위치 구글 지도",
   },
   notifyDialog: {
     title: "알림 신청",
@@ -289,7 +288,6 @@ const en: Dictionary = {
     addressLabel: "Address",
     address: "22-1 Hansin-ro 531beon-gil, Namwon-eup, Seogwipo-si, Jeju, Korea",
     open: "Open in Google Maps",
-    mapTitle: "Google Map showing the Dongbaek Village Visitor Center",
   },
   notifyDialog: {
     title: "Get notified",

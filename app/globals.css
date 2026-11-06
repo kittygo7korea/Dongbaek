@@ -238,14 +238,11 @@ footer { display: flex; justify-content: space-between; gap: .75rem; padding: 1.
 
 /* 오시는 길 */
 .directions { background: #fff; }
-.directions-grid { max-width: 1160px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(1.5rem, 4vw, 3.5rem); align-items: center; }
+.directions-grid { max-width: 1160px; margin: 0 auto; }
 .directions h2 { margin: 0; }
 .directions-info { margin: 1.4rem 0 1.6rem; display: grid; grid-template-columns: auto 1fr; gap: .55rem 1rem; line-height: 1.6; }
 .directions-info dt { color: var(--type-green); font-weight: 800; font-size: .85rem; padding-top: .1rem; }
 .directions-info dd { margin: 0; color: var(--forest); }
-.map-frame { overflow: hidden; border: 1px solid var(--line); border-radius: 1.2rem; aspect-ratio: 4 / 3; background: var(--ivory); }
-.map-frame iframe { display: block; width: 100%; height: 100%; border: 0; }
-@media (max-width: 720px) { .directions-grid { grid-template-columns: 1fr; } .map-frame { aspect-ratio: 1; } }
 
 /* 굿즈 담아두기 + 장바구니 */
 .product-add { align-self: flex-start; display: inline-flex; align-items: center; gap: .35rem; margin: .9rem 1rem 1.1rem; padding: .45rem .9rem; border: 1.5px solid var(--logo-pink); border-radius: 3rem; background: #fff; color: var(--logo-pink); font-size: .84rem; font-weight: 800; cursor: pointer; transition: background .2s, color .2s; }

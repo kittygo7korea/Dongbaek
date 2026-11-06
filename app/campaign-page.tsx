@@ -165,31 +165,20 @@ export function CampaignPage({ lang }: { lang: Locale }) {
           </ol>
         </section>
 
-        {/* ⑦ 오시는 길: 동백마을방문자센터 구글 지도 (API 키 없이 쓰는 기본 임베드) */}
+        {/* ⑦ 오시는 길: 동백마을방문자센터 주소 + 구글 지도 링크 (지도 미리보기는 넣지 않음) */}
         <section className="section directions" id="directions" aria-labelledby="directions-title">
           <div className="directions-grid">
-            <div>
-              <p className="eyebrow">06 · HOW TO GET HERE</p>
-              <h2 id="directions-title">{t.directions.title}</h2>
-              <dl className="directions-info">
-                <dt>{t.directions.placeLabel}</dt>
-                <dd>{t.directions.place}</dd>
-                <dt>{t.directions.addressLabel}</dt>
-                <dd>{t.directions.address}</dd>
-              </dl>
-              <a className="button" href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`} target="_blank" rel="noopener noreferrer">
-                {t.directions.open} <span aria-hidden="true">↗</span>
-              </a>
-            </div>
-            <div className="map-frame">
-              <iframe
-                title={t.directions.mapTitle}
-                src={`https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&hl=${lang}&z=16&output=embed`}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                allowFullScreen
-              />
-            </div>
+            <p className="eyebrow">06 · HOW TO GET HERE</p>
+            <h2 id="directions-title">{t.directions.title}</h2>
+            <dl className="directions-info">
+              <dt>{t.directions.placeLabel}</dt>
+              <dd>{t.directions.place}</dd>
+              <dt>{t.directions.addressLabel}</dt>
+              <dd>{t.directions.address}</dd>
+            </dl>
+            <a className="button" href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`} target="_blank" rel="noopener noreferrer">
+              {t.directions.open} <span aria-hidden="true">↗</span>
+            </a>
           </div>
         </section>
       </main>
