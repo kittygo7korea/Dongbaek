@@ -7,10 +7,24 @@
 | 2026-11-06 15:40 | 헤더 알림받기 창 | ko | you@example.com | 블룸이친구 | O | O |  | 동의 |
 | 2026-11-06 15:42 | 알림 섹션 | ko | me@example.com |  | O |  | 블룸 컵 | 동의 |
 
-흐름: 방문자 브라우저 → 이 사이트 서버(`/api/notify`) → 구글 Apps Script 웹 앱 → 시트
-(시트 주소와 비밀값은 서버에만 있어 방문자에게 보이지 않습니다.)
+## 지금 쓰는 방식: 구글 설문지 (권한 승인 필요 없음)
+
+흐름: 방문자 브라우저 → 이 사이트 서버(`/api/notify`) → 구글 설문지 **동백마을 알림 신청 (웹사이트 연동용)** → 시트 [동백마을 알림 신청](https://docs.google.com/spreadsheets/d/1K1p69Kl-NcnNteUhyBR-yXRlRknuu-2cJ0Y_TwvfNf4/edit)의 **설문지 응답 시트1** 탭
+
+- Vercel 환경 변수: `GOOGLE_FORM_ACTION_URL` = `https://docs.google.com/forms/d/e/1FAIpQLSd9Mwzj2vQ5_UeQJpIsdQVDFlRidxdXDN8jrr1hxge5fQhzMw/formResponse`
+- 질문별 입력 칸 번호는 `app/api/notify/route.ts`의 `FORM_ENTRIES`에 있습니다.
+  **설문지 질문을 지우거나 새로 만들면 번호가 바뀌므로** 그때는 공개 설문지 페이지 소스에서 번호를 다시 확인해 고쳐야 합니다. (질문 제목만 고치는 것은 괜찮음)
+- 설문지는 '링크가 있는 모든 사용자'에게 게시되어 있어야 합니다. 게시를 중지하면 신청이 저장되지 않습니다.
+- 시트의 `Untitled` 탭은 처음 만든 빈 제목 줄이라 지워도 됩니다.
 
 ---
+
+## (대안) Apps Script 웹 앱 방식
+
+`GOOGLE_FORM_ACTION_URL`이 없을 때만 사용합니다. 여러 구글 계정에 로그인된 크롬에서는 권한 승인이 잘 안 될 수 있어, 그럴 땐 시크릿 창에서 진행하세요.
+
+흐름: 방문자 브라우저 → 이 사이트 서버(`/api/notify`) → 구글 Apps Script 웹 앱 → 시트
+(시트 주소와 비밀값은 서버에만 있어 방문자에게 보이지 않습니다.)
 
 ## 1. 시트와 Apps Script 만들기 (5분)
 
