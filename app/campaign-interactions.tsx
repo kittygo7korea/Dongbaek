@@ -90,7 +90,7 @@ export function BloomFormation({ label, replay }: { label: string; replay: strin
           <div className="logo-letters" aria-hidden="true">
             <Image src="/bloom/logo.webp" alt="" width={900} height={900} sizes="(max-width: 720px) 92vw, 640px" preload />
           </div>
-          {/* 원본 로고 꽃: 움직임 줄이기 설정일 때만 표시 */}
+          {/* 마무리 층: 원본 로고 전체 (요정 꽃 → 깨끗한 원본 선으로 교체) */}
           <div className="logo-flower" aria-hidden="true">
             <Image src="/bloom/logo.webp" alt="" width={900} height={900} sizes="(max-width: 720px) 92vw, 640px" />
           </div>
@@ -122,7 +122,7 @@ export function BloomFormation({ label, replay }: { label: string; replay: strin
 }
 
 /* 굿즈 사진을 누르면 크게 보기. <dialog>를 써서 Esc 키·닫기 버튼·바깥 어두운 영역 클릭으로 닫힘 */
-export function ZoomableProduct({ image, name, detail, zoomLabel, closeLabel }: { image: string; name: string; detail: string; zoomLabel: string; closeLabel: string }) {
+export function ZoomableProduct({ image, name, detail, zoomLabel, closeLabel }: { image: string; name: string; detail: ReactNode; zoomLabel: string; closeLabel: string }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const src = `/bloom/${image}.webp`;
 

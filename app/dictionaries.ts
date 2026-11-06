@@ -19,6 +19,7 @@ const ko = {
   hero: {
     line1: "올 겨울, 동백마을이 A2O Lite와 만나",
     line2: "새롭게 피어납니다",
+    cta: "콜라보 굿즈 보기",
     more: "더 둘러보기",
     formationLabel: "동백요정이 미끄러지듯 내려와 bLOOM Your Way 로고의 꽃이 됩니다",
     replay: "요정이 피어나는 장면 다시 보기",
@@ -105,6 +106,15 @@ const ko = {
       "5/5. 꽃 자리가 빈 bLOOM 로고와 동백요정. 동백요정이 남긴 이름을 찾아보세요. 더 알아보기.",
     ],
   },
+  directions: {
+    title: "오시는 길",
+    placeLabel: "장소",
+    place: "동백마을방문자센터",
+    addressLabel: "주소",
+    address: "제주특별자치도 서귀포시 남원읍 한신로531번길 22-1",
+    open: "구글 지도에서 열기",
+    mapTitle: "동백마을방문자센터 위치 구글 지도",
+  },
   footer: { note: "DONGBAEK VILLAGE × A2O LITE · 교육용 가상 캠페인", top: "맨 위로 ↑" },
 };
 
@@ -127,6 +137,7 @@ const en: Dictionary = {
   hero: {
     line1: "This winter, Dongbaek Village meets A2O Lite",
     line2: "and blooms anew",
+    cta: "See the collab goods",
     more: "Explore more",
     formationLabel: "The camellia fairy glides down and becomes the flower in the bLOOM Your Way logo",
     replay: "Watch the fairy bloom again",
@@ -211,6 +222,15 @@ const en: Dictionary = {
       "4/5. Soon, it blooms. Dongbaek Village collab goods, coming winter 2026. Three goods shown blurred.",
       "5/5. The bLOOM logo with the flower missing, and the camellia fairy. Find the name the camellia fairy left behind. Learn more.",
     ],
+  },
+  directions: {
+    title: "Getting here",
+    placeLabel: "Place",
+    place: "Dongbaek Village Visitor Center",
+    addressLabel: "Address",
+    address: "22-1 Hansin-ro 531beon-gil, Namwon-eup, Seogwipo-si, Jeju, Korea",
+    open: "Open in Google Maps",
+    mapTitle: "Google Map showing the Dongbaek Village Visitor Center",
   },
   footer: { note: "DONGBAEK VILLAGE × A2O LITE · Educational fictional campaign", top: "Back to top ↑" },
 };

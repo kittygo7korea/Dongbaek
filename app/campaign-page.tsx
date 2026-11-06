@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { AutoSwipeTrack, BloomFormation, NotifyForm, ZoomableCard, ZoomableProduct } from "./campaign-interactions";
 import { dictionaries, type Locale } from "./dictionaries";
+import { neon } from "./neon";
 
 /* 이미지·색 같은 언어와 무관한 값. 문구는 dictionaries.ts에서 같은 순서로 가져옵니다. */
 const dayImages = [
@@ -13,6 +14,8 @@ const dayImages = [
 ];
 const goodsImages = ["cups", "bag", "camping-chair", "cap", "pouch", "essence"];
 const swatchColors = ["#d62839", "#ff0176", "#fdf8eb", "#c4d88d"];
+// 이름까지 넣으면 검색 결과가 여러 곳으로 갈려, 정확한 주소만으로 한 지점에 핀을 꽂습니다
+const mapQuery = "제주특별자치도 서귀포시 남원읍 한신로531번길 22-1";
 
 export function CampaignPage({ lang }: { lang: Locale }) {
   const t = dictionaries[lang];
@@ -43,11 +46,11 @@ export function CampaignPage({ lang }: { lang: Locale }) {
         <section className="hero" aria-labelledby="hero-title">
           <Image className="hero-forest" src="/bloom/forest.webp" alt="" fill sizes="100vw" preload />
           <div className="hero-inner">
-            <p className="eyebrow hero-eyebrow">DONGBAEK VILLAGE × A2O LITE</p>
+            <p className="eyebrow hero-eyebrow">{neon("DONGBAEK VILLAGE × A2O LITE")}</p>
             <BloomFormation label={t.hero.formationLabel} replay={t.hero.replay} />
             <div className="hero-copy">
-              <h1 id="hero-title">{t.hero.line1}<br /><em>{t.hero.line2}</em></h1>
-              <a className="button button-large" href="#notify">{t.notifyCta}</a>
+              <h1 id="hero-title">{neon(t.hero.line1)}<br /><em>{t.hero.line2}</em></h1>
+              <a className="button button-large" href="#goods">{t.hero.cta}</a>
               <a className="scroll-hint" href="#collab">{t.hero.more} <span aria-hidden="true">↓</span></a>
             </div>
           </div>
@@ -58,8 +61,8 @@ export function CampaignPage({ lang }: { lang: Locale }) {
           <div className="collab-grid">
             <div>
               <p className="eyebrow">01 · COLLABORATION NEWS</p>
-              <h2 id="collab-title">{t.collab.title1}<br />{t.collab.title2}</h2>
-              <p className="lead">{t.collab.lead}</p>
+              <h2 id="collab-title">{neon(t.collab.title1)}<br />{t.collab.title2}</h2>
+              <p className="lead">{neon(t.collab.lead)}</p>
               <ul className="swatches" aria-label={t.collab.swatchLabel}>
                 {t.collab.swatches.map((name, i) => (
                   <li key={name}><span style={{ background: swatchColors[i] }} aria-hidden="true" />{name}</li>
@@ -68,7 +71,7 @@ export function CampaignPage({ lang }: { lang: Locale }) {
             </div>
             <figure className="collab-visual">
               <Image src="/bloom/a2o-graphics.png" alt={t.collab.graphicAlt} width={670} height={447} sizes="(max-width: 720px) 100vw, 45vw" />
-              <figcaption>{t.collab.graphicCaption}</figcaption>
+              <figcaption>{neon(t.collab.graphicCaption)}</figcaption>
             </figure>
           </div>
         </section>
@@ -98,15 +101,15 @@ export function CampaignPage({ lang }: { lang: Locale }) {
           <div className="section-heading">
             <p className="eyebrow">03 · COMING THIS WINTER</p>
             <h2 id="goods-title">{t.goods.title}</h2>
-            <p>{t.goods.sub} · <strong>{t.goods.status}</strong></p>
+            <p>{neon(t.goods.sub)} · <strong>{t.goods.status}</strong></p>
           </div>
           <ul className="product-grid">
             {t.goods.items.map((g, i) => (
               <li key={goodsImages[i]}>
                 <span className="status">{t.goods.status}</span>
-                <ZoomableProduct image={goodsImages[i]} name={g.name} detail={g.detail} zoomLabel={t.goods.zoom} closeLabel={t.goods.close} />
+                <ZoomableProduct image={goodsImages[i]} name={g.name} detail={neon(g.detail)} zoomLabel={t.goods.zoom} closeLabel={t.goods.close} />
                 <h3>{g.name}</h3>
-                <p>{g.detail}</p>
+                <p>{neon(g.detail)}</p>
                 <a className="product-notify" href="#notify">{t.notifyCta} <span aria-hidden="true">→</span></a>
               </li>
             ))}
@@ -126,7 +129,7 @@ export function CampaignPage({ lang }: { lang: Locale }) {
         <section className="section notify" id="notify" aria-labelledby="notify-title">
           <Image className="notify-logo" src="/bloom/logo.webp" alt="" width={900} height={900} sizes="280px" />
           <h2 id="notify-title">{t.notify.title1}<br />{t.notify.title2}</h2>
-          <p>{t.notify.sub}</p>
+          <p>{neon(t.notify.sub)}</p>
           <NotifyForm t={t.notify} cta={t.notifyCta} />
         </section>
 
@@ -158,7 +161,7 @@ export function CampaignPage({ lang }: { lang: Locale }) {
           <div className="section-heading">
             <p className="eyebrow">05 · ON INSTAGRAM</p>
             <h2 id="cardnews-title">{t.cardnews.title}</h2>
-            <p>{t.cardnews.sub}{t.cardnews.note && <> <span className="cardnews-note">{t.cardnews.note}</span></>}</p>
+            <p>{neon(t.cardnews.sub)}{t.cardnews.note && <> <span className="cardnews-note">{t.cardnews.note}</span></>}</p>
           </div>
           <ol className="cardnews-track">
             {t.cardnews.cards.map((alt, i) => (
@@ -168,10 +171,38 @@ export function CampaignPage({ lang }: { lang: Locale }) {
             ))}
           </ol>
         </section>
+
+        {/* ⑦ 오시는 길: 동백마을방문자센터 구글 지도 (API 키 없이 쓰는 기본 임베드) */}
+        <section className="section directions" id="directions" aria-labelledby="directions-title">
+          <div className="directions-grid">
+            <div>
+              <p className="eyebrow">06 · HOW TO GET HERE</p>
+              <h2 id="directions-title">{t.directions.title}</h2>
+              <dl className="directions-info">
+                <dt>{t.directions.placeLabel}</dt>
+                <dd>{t.directions.place}</dd>
+                <dt>{t.directions.addressLabel}</dt>
+                <dd>{t.directions.address}</dd>
+              </dl>
+              <a className="button" href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`} target="_blank" rel="noopener noreferrer">
+                {t.directions.open} <span aria-hidden="true">↗</span>
+              </a>
+            </div>
+            <div className="map-frame">
+              <iframe
+                title={t.directions.mapTitle}
+                src={`https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&hl=${lang}&z=16&output=embed`}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        </section>
       </main>
 
       <footer>
-        <span>{t.footer.note}</span>
+        <span>{neon(t.footer.note)}</span>
         <a href="#top">{t.footer.top}</a>
       </footer>
     </>
