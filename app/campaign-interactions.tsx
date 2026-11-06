@@ -151,10 +151,38 @@ export function ZoomableCard({ src, alt, zoomLabel, closeLabel }: { src: string;
   );
 }
 
-/* 교육용 데모: 입력한 이메일은 어디에도 전송·저장하지 않습니다. */
+/* 알림 신청 보내기: 이 사이트의 서버(/api/notify)가 받아 구글 스프레드시트에 한 줄로 저장합니다. */
+type NotifyPayload = {
+  source: "dialog" | "section"; email: string; nickname?: string;
+  goods: boolean; program: boolean; interests?: string[]; consent: true; website: string;
+};
+async function sendNotify(payload: NotifyPayload): Promise<"ok" | "invalid" | "failed"> {
+  try {
+    const res = await fetch("/api/notify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...payload, lang: document.documentElement.lang }),
+    });
+    if (res.ok) return "ok";
+    return res.status === 400 ? "invalid" : "failed";
+  } catch {
+    return "failed";
+  }
+}
+/* 사람에게는 보이지 않는 스팸 방지 칸: 봇이 채우면 서버가 저장하지 않음 */
+function Honeypot() {
+  return (
+    <label className="hp" aria-hidden="true">
+      Website <input type="text" name="website" tabIndex={-1} autoComplete="off" defaultValue="" />
+    </label>
+  );
+}
+
+/* 알림 섹션 폼: 이메일 + 관심 굿즈 → 콜라보 굿즈 출시 소식으로 저장 */
 export function NotifyForm({ t, cta }: { t: Dictionary["notify"]; cta: string }) {
   const [done, setDone] = useState(false);
   const [error, setError] = useState("");
+  const [sending, setSending] = useState(false);
   // 장바구니의 '출시 알림받기'로 넘어오면 담아둔 굿즈를 관심 굿즈로 미리 체크 (폼을 새로 그려 기본 체크값 반영)
   const [picks, setPicks] = useState<number[]>([]);
   const [pickRun, setPickRun] = useState(0);
@@ -169,15 +197,22 @@ export function NotifyForm({ t, cta }: { t: Dictionary["notify"]; cta: string })
     return () => window.removeEventListener(NOTIFY_PICK_EVENT, onPick);
   }, []);
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (sending) return;
     const form = event.currentTarget;
     const email = (form.elements.namedItem("email") as HTMLInputElement).value.trim();
     const agreed = (form.elements.namedItem("agree") as HTMLInputElement).checked;
+    const interests = [...form.querySelectorAll<HTMLInputElement>('input[name="interest"]:checked')].map((el) => el.value);
+    const website = (form.elements.namedItem("website") as HTMLInputElement).value;
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return setError(t.errorEmail);
     if (!agreed) return setError(t.errorAgree);
     setError("");
-    setDone(true);
+    setSending(true);
+    const result = await sendNotify({ source: "section", email, goods: true, program: false, interests, consent: true, website });
+    setSending(false);
+    if (result === "ok") setDone(true);
+    else setError(result === "invalid" ? t.errorEmail : t.errorServer);
   }
 
   if (done) {
@@ -210,8 +245,9 @@ export function NotifyForm({ t, cta }: { t: Dictionary["notify"]; cta: string })
         <input type="checkbox" name="agree" required />
         <span>{t.agree}</span>
       </label>
+      <Honeypot />
       <p className="form-error" role="alert">{error}</p>
-      <button className="button button-large" type="submit">{cta}</button>
+      <button className="button button-large" type="submit" disabled={sending} aria-busy={sending}>{sending ? t.sending : cta}</button>
       <p className="demo-note">{t.demo}</p>
     </form>
   );
@@ -348,14 +384,16 @@ export function RevealOnScroll() {
 }
 
 /* 헤더 '알림받기' → 알림 신청 창(<dialog>): 이메일·닉네임 입력 + 받고 싶은 소식 체크(하나 이상).
-   교육용 데모: 입력한 내용은 어디에도 전송·저장하지 않습니다. Esc·닫기 버튼·바깥 클릭으로 닫힘 */
+   제출하면 /api/notify → 구글 스프레드시트에 저장. Esc·닫기 버튼·바깥 클릭으로 닫힘 */
 export function NotifyDialogButton({ label, t }: { label: string; t: Dictionary["notifyDialog"] }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [error, setError] = useState("");
+  const [sending, setSending] = useState(false);
   const [done, setDone] = useState<{ nick: string; topics: string[] } | null>(null);
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (sending) return;
     const form = event.currentTarget;
     const field = (name: string) => form.elements.namedItem(name) as HTMLInputElement;
     const email = field("email").value.trim();
@@ -366,7 +404,15 @@ export function NotifyDialogButton({ label, t }: { label: string; t: Dictionary[
     if (topics.length === 0) return fail(t.errorTopic, field("topic-0"));
     if (!field("agree").checked) return fail(t.errorAgree, field("agree"));
     setError("");
-    setDone({ nick, topics });
+    setSending(true);
+    const result = await sendNotify({
+      source: "dialog", email, nickname: nick,
+      goods: field("topic-0").checked, program: field("topic-1").checked,
+      consent: true, website: field("website").value,
+    });
+    setSending(false);
+    if (result === "ok") setDone({ nick, topics });
+    else setError(result === "invalid" ? t.errorEmail : t.errorServer);
   }
   function fail(message: string, el: HTMLInputElement) {
     setError(message);
@@ -413,8 +459,9 @@ export function NotifyDialogButton({ label, t }: { label: string; t: Dictionary[
                   <input type="checkbox" name="agree" required />
                   <span>{t.agree}</span>
                 </label>
+                <Honeypot />
                 <p className="form-error" role="alert">{error}</p>
-                <button className="button button-large" type="submit">{t.submit}</button>
+                <button className="button button-large" type="submit" disabled={sending} aria-busy={sending}>{sending ? t.sending : t.submit}</button>
                 <p className="demo-note">{t.demo}</p>
               </form>
             </>

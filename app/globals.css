@@ -300,3 +300,7 @@ footer { display: flex; justify-content: space-between; gap: .75rem; padding: 1.
 .topic:has(input:checked) { border-color: var(--bloom-green); background: #c4d88d1a; }
 .notify-dialog .notify-done { margin: 0; text-align: center; }
 .done-topics { margin: .4rem 0 0; padding: 0; list-style: none; display: grid; gap: .35rem; color: var(--bloom-green); font-weight: 700; }
+
+/* 스팸 방지용 숨은 칸 (사람에게 보이지 않음) */
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.notify-form .button:disabled { opacity: .7; cursor: progress; transform: none; }

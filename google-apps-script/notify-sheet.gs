@@ -1,0 +1,67 @@
+/**
+ * 동백마을 × A2O Lite 알림 신청 → 구글 스프레드시트 저장 (Google Apps Script 웹 앱)
+ *
+ * 웹사이트 서버(/api/notify)가 이 웹 앱으로 신청 내용을 보내면, 시트에 한 줄씩 쌓입니다.
+ * 설정 방법은 같은 폴더의 README.md를 보세요.
+ *
+ * 1) SECRET 값을 아무도 모르는 긴 문자열로 바꾸고, Vercel 환경 변수 GOOGLE_SHEET_WEBHOOK_SECRET에도 똑같이 넣으세요.
+ * 2) 배포 → 새 배포 → 유형 '웹 앱', 실행 사용자 '나', 액세스 권한 '모든 사용자'로 배포하세요.
+ */
+const SECRET = "여기에-긴-비밀값을-넣으세요";
+const SHEET_NAME = "알림신청";
+const HEADERS = ["신청 시각", "신청 위치", "언어", "이메일", "닉네임", "콜라보 굿즈 소식", "동백마을체험 소식", "관심 굿즈", "개인정보 동의"];
+
+function doPost(e) {
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000); // 동시에 여러 명이 신청해도 줄이 겹치지 않게
+  try {
+    const data = JSON.parse((e && e.postData && e.postData.contents) || "{}");
+    if (data.secret !== SECRET) return json({ ok: false, error: "unauthorized" });
+
+    const sheet = getSheet();
+    sheet.appendRow([
+      new Date(),
+      data.source === "dialog" ? "헤더 알림받기 창" : "알림 섹션",
+      data.lang || "",
+      safe(data.email),
+      safe(data.nickname),
+      data.goods ? "O" : "",
+      data.program ? "O" : "",
+      safe((data.interests || []).join(", ")),
+      data.consent ? "동의" : "",
+    ]);
+    return json({ ok: true });
+  } catch (err) {
+    return json({ ok: false, error: String(err) });
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/* 시트가 없으면 만들고 첫 줄에 제목을 넣어 둠 */
+function getSheet() {
+  const book = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = book.getSheetByName(SHEET_NAME);
+  if (!sheet) sheet = book.insertSheet(SHEET_NAME);
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(HEADERS);
+    sheet.setFrozenRows(1);
+    sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight("bold");
+  }
+  return sheet;
+}
+
+/* =, +, -, @ 로 시작하는 값은 시트가 수식으로 실행하지 않도록 앞에 ' 를 붙임 */
+function safe(value) {
+  const text = String(value == null ? "" : value).slice(0, 200);
+  return /^[=+\-@]/.test(text) ? "'" + text : text;
+}
+
+function json(body) {
+  return ContentService.createTextOutput(JSON.stringify(body)).setMimeType(ContentService.MimeType.JSON);
+}
+
+/* Apps Script 편집기에서 이 함수를 한 번 실행하면 권한 승인 + 시트 제목 줄이 만들어집니다 */
+function setup() {
+  getSheet();
+}
