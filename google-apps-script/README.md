@@ -14,12 +14,12 @@
 
 ## 1. 시트와 Apps Script 만들기 (5분)
 
-1. [Google 스프레드시트](https://sheets.new)에서 새 시트를 만들고 이름을 정합니다. 예: `동백마을 알림 신청`
+1. 시트를 엽니다. 이미 만들어 둔 [동백마을 알림 신청](https://docs.google.com/spreadsheets/d/1K1p69Kl-NcnNteUhyBR-yXRlRknuu-2cJ0Y_TwvfNf4/edit) 시트(제목 줄 포함)를 쓰면 됩니다. 새로 만들려면 [sheets.new](https://sheets.new)에서 만드세요.
 2. 메뉴 **확장 프로그램 → Apps Script**를 엽니다.
 3. 기본 코드를 모두 지우고 [`notify-sheet.gs`](notify-sheet.gs) 내용을 그대로 붙여 넣습니다.
 4. 맨 위 `SECRET` 값을 **아무도 모르는 긴 문자열**로 바꿉니다. (예: 비밀번호 생성기로 만든 32자 이상)
 5. 저장(💾) → 위쪽 함수 선택에서 **`setup`** 을 고르고 **실행** → 권한 승인 창에서 내 계정으로 **허용**.
-   시트에 `알림신청` 탭과 제목 줄이 생기면 성공입니다.
+   첫 탭 이름이 `알림신청`으로 바뀌고 굵은 제목 줄이 고정되면 성공입니다.
 
 ## 2. 웹 앱으로 배포
 

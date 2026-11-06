@@ -38,13 +38,26 @@ function doPost(e) {
   }
 }
 
-/* 시트가 없으면 만들고 첫 줄에 제목을 넣어 둠 */
+/* '알림신청' 탭을 찾음. 없으면 첫 탭이 비어 있거나 같은 제목 줄만 있을 때 그 탭의 이름을 바꿔 쓰고,
+   그렇지 않으면 새 탭을 만듦. 첫 줄이 비어 있으면 제목을 넣어 둠 */
 function getSheet() {
   const book = SpreadsheetApp.getActiveSpreadsheet();
   let sheet = book.getSheetByName(SHEET_NAME);
-  if (!sheet) sheet = book.insertSheet(SHEET_NAME);
+  if (!sheet) {
+    const first = book.getSheets()[0];
+    const firstRow = first.getLastRow() === 0 ? [] : first.getRange(1, 1, 1, HEADERS.length).getValues()[0];
+    const reusable = first.getLastRow() === 0 || (first.getLastRow() === 1 && firstRow.join("|") === HEADERS.join("|"));
+    if (reusable) {
+      first.setName(SHEET_NAME);
+      sheet = first;
+    } else {
+      sheet = book.insertSheet(SHEET_NAME);
+    }
+  }
   if (sheet.getLastRow() === 0) {
     sheet.appendRow(HEADERS);
+  }
+  if (sheet.getFrozenRows() === 0) { // 제목 줄 고정·굵게 (처음 한 번)
     sheet.setFrozenRows(1);
     sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight("bold");
   }
